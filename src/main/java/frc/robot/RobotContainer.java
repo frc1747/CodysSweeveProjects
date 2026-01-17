@@ -36,7 +36,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    publiic RobotContainer() {
+    public RobotContainer() {
         configureBindings();
     }
 
