@@ -359,6 +359,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
 
+        // Did we actually receive a MetaTag2 instance and if we did, did it see any tags?
         if (mt2 != null && mt2.tagCount > 0) {
             addVisionMeasurement(mt2.pose, 
                 mt2.timestampSeconds, 
