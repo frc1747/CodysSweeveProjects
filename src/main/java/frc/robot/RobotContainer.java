@@ -51,9 +51,9 @@ public class RobotContainer {
 
     // control
     private final Joystick driver = new Joystick(0);
-    private final DoubleSupplier translationSup = () -> driver.getRawAxis(XboxController.Axis.kLeftY.value);
-    private final DoubleSupplier strafeSup = () -> driver.getRawAxis(XboxController.Axis.kLeftX.value);
-    private final DoubleSupplier rotationSup = () -> driver.getRawAxis(XboxController.Axis.kRightX.value);
+    private final DoubleSupplier translationSup = () -> driver.getRawAxis(XboxController.Axis.kLeftY.value); // forward/backward on left stick
+    private final DoubleSupplier strafeSup = () -> driver.getRawAxis(XboxController.Axis.kLeftX.value); // right/left on left stick
+    private final DoubleSupplier rotationSup = () -> driver.getRawAxis(XboxController.Axis.kRightX.value); // right/left on right stick 
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
