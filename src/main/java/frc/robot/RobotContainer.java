@@ -24,9 +24,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AprilLock;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
@@ -44,11 +46,14 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
+    // limelight
     private final LimeLight limelight = new LimeLight("limelight-front");
-    // maybe not necessary? idk whats going on tbh
+
+    // control
     private final Joystick driver = new Joystick(0);
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
+    private final DoubleSupplier translationSup = () -> driver.getRawAxis(XboxController.Axis.kLeftY.value);
+    private final DoubleSupplier strafeSup = () -> driver.getRawAxis(XboxController.Axis.kLeftX.value);
+    private final DoubleSupplier rotationSup = () -> driver.getRawAxis(XboxController.Axis.kRightX.value);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -74,12 +79,8 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            new AprilLock(limelight, drivetrain, () -> -driver.getRawAxis(translationAxis), () -> -driver.getRawAxis(strafeAxis))
-            // drivetrain.applyRequest(() ->
-            //    drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            // )
+            // new AprilLock(limelight, drivetrain, translationSup, strafeSup)
+            new TeleopSwerve(drivetrain, translationSup, strafeSup, rotationSup)
         );
 
         // Idle while the robot is disabled. This ensures the configured
@@ -93,6 +94,9 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
+        new JoystickButton(driver, XboxController.Button.kRightBumper.value)
+            .whileTrue(new AprilLock(limelight, drivetrain, translationSup, strafeSup));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

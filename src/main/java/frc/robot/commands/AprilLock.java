@@ -41,6 +41,7 @@ public class AprilLock extends Command {
   @Override
   public void initialize() {}
 
+  // TODO: reformat to make more readable
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -50,7 +51,7 @@ public class AprilLock extends Command {
       boolean targetValidity = this.limelight.hasValidTarget();
       if (!targetValidity) {
         System.out.println("Target Not Detected");
-        Translation2d translation = new Translation2d(-translationVal, -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED * 0.3);
+        Translation2d translation = new Translation2d(translationVal, strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED * 0.3);
         SwerveRequest request = new SwerveRequest.RobotCentric()
             .withVelocityX(-translation.getX())
             .withVelocityY(-translation.getY());
@@ -63,7 +64,7 @@ public class AprilLock extends Command {
         double pidOutput = pid.calculate(xOffset);
         double clampPid = pidOutput > 1.0 ? 1.0 : pidOutput;
         // this.drivetrain.simpleDrive(new Translation2d(-translationVal - 0.1 * Math.abs(strafeVal), -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED), 0.3 * clampPid* Constants.DrivetrainConstants.maxAngularVelocity);
-        Translation2d translation = new Translation2d(-translationVal - 0.1 * Math.abs(strafeVal), -strafeVal);
+        Translation2d translation = new Translation2d(translationVal - 0.1 * Math.abs(strafeVal), strafeVal);
         double rotation = 0.3 * clampPid * Constants.DrivetrainConstants.maxAngularVelocity;
         SwerveRequest request = new SwerveRequest.RobotCentric()
             .withVelocityX(-translation.getX())
