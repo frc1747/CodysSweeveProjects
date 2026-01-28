@@ -50,10 +50,11 @@ public class AprilLock extends Command {
       boolean targetValidity = this.limelight.hasValidTarget();
       if (!targetValidity) {
         System.out.println("Target Not Detected");
-        Translation2d translation = new Translation2d(-translationVal, -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED);
+        Translation2d translation = new Translation2d(-translationVal, -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED * 0.3);
         SwerveRequest request = new SwerveRequest.RobotCentric()
             .withVelocityX(-translation.getX())
             .withVelocityY(-translation.getY());
+        drivetrain.setControl(request);
         return;
       } else {
         System.out.println("Target Detected");
@@ -61,7 +62,16 @@ public class AprilLock extends Command {
         double xOffset = this.limelight.getXOffset() * 2 / Constants.VisionConstants.FOV_HORIZONTAL;
         double pidOutput = pid.calculate(xOffset);
         double clampPid = pidOutput > 1.0 ? 1.0 : pidOutput;
-        // this.drivetrain.simpleDrive(new Translation2d(-translationVal - 0.1 * Math.abs(strafeVal), -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED), 0.3 * clampPid * Constants.DrivetrainConstants.maxAngularVelocity);
+        // this.drivetrain.simpleDrive(new Translation2d(-translationVal - 0.1 * Math.abs(strafeVal), -strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED), 0.3 * clampPid* Constants.DrivetrainConstants.maxAngularVelocity);
+        Translation2d translation = new Translation2d(-translationVal - 0.1 * Math.abs(strafeVal), -strafeVal);
+        double rotation = 0.3 * clampPid * Constants.DrivetrainConstants.maxAngularVelocity;
+        SwerveRequest request = new SwerveRequest.RobotCentric()
+            .withVelocityX(-translation.getX())
+            .withVelocityY(-translation.getY())
+            .withRotationalRate(rotation);
+        System.out.println("xOffset " + xOffset);
+        System.out.println("Rotation " + rotation);
+        drivetrain.setControl(request);
       }
   } 
 

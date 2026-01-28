@@ -44,7 +44,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final LimeLight limelight = new LimeLight("a"); // placeholder
+    private final LimeLight limelight = new LimeLight("limelight-front");
     // maybe not necessary? idk whats going on tbh
     private final Joystick driver = new Joystick(0);
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -93,7 +93,7 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-        
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
