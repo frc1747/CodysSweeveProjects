@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -61,6 +62,19 @@ public class Turret extends SubsystemBase {
 
   public double getTurretAngle() {
     return encoder.get() * 360;
+  }
+
+  // aim at a pose2d
+  public double aimAtPose(Pose2d botPose , Pose2d TargetPose){
+  double opp = botPose.getY()- TargetPose.getY(); 
+  //chatgpt is to smart for this code
+  double adj = botPose.getX()- TargetPose.getX(); 
+  // get the angle with basic trig
+  double DiffAngle = Math.toDegrees(Math.atan2(opp,adj));
+  goToAngle(DiffAngle);
+  // moving to the angle  
+  return DiffAngle;
+  //returning the angle to see the error.
   }
 
 
