@@ -58,7 +58,7 @@ public class LimeLight extends SubsystemBase {
         return validTargetEntry.getDouble(0.0) == 1;
     }
 
-    // what is this and why
+    // what is this and why is it here
     public void robotInit() {
       for (int port = 5800; port <= 5809; port ++) {
         PortForwarder.add(port+10, "limelight.local", port);
