@@ -29,7 +29,7 @@ public class AprilLock2 extends Command {
   private DoubleSupplier strafeSup;
   private PIDController pid;
 
-  // posestimator Object is a placegolder!!!
+  // TODO: fix starting pose of robot
   public AprilLock2(LimeLight limeLight, CommandSwerveDrivetrain drivetrain, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
     this.limelight = limeLight;
     this.drivetrain = drivetrain;
@@ -48,45 +48,55 @@ public class AprilLock2 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      System.out.println("Running AprilLock2");
       // apply deadzone
+      // translation value is forward/backward on left joystick
       double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.ControllerConstants.STICK_DEADBAND);
+      // strafe value is left/right on left joystick
       double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.ControllerConstants.STICK_DEADBAND);
-      boolean targetValidity = this.limelight.hasValidTarget();
-      if (/*!targetValidity*/false) {
-        Translation2d translation = new Translation2d(translationVal, strafeVal).times(Constants.DrivetrainConstants.MAX_SPEED * 0.3);
-        SwerveRequest request = new SwerveRequest.FieldCentric()
-            .withVelocityX(-translation.getX())
-            .withVelocityY(-translation.getY());
-        drivetrain.setControl(request);
-        return;
-      } else {
-        Pose2d apriltagPose = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
-        Pose2d robotPose = drivetrain.getState().Pose;
-        System.out.println("Robot Pose: " + robotPose);
-        // placeholder code and conceptual
-        // yaw offset between april tag normal vecotr and robot vector pointing directly out from camera
-        double yawOffset = drivetrain.getRotation3d().getX() - apriltagPose.getRotation().getDegrees();
-        double radius = robotPose.getTranslation().getDistance(apriltagPose.getTranslation()); // distance between the robot and the apriltag
         
-        double pidOutput = pid.calculate(yawOffset);
-        double clampPid = pidOutput > 1.0 ? 1.0 : pidOutput;
+      // pose of apriltag on field, rotation represents angle of its normal vector
+      Pose2d apriltagPose = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
+      Pose2d robotPose = drivetrain.getState().Pose; 
+      
+      // difference between robot and april tag poses
+      Translation2d diff = robotPose.getTranslation().minus(apriltagPose.getTranslation());
+      // angle between diff and from vector(1, 0, 0)
+      double diffAngle = Math.atan2(diff.getY(), diff.getX());
+      // strafe angle is angle of a vector perpendicular to diff
+      double strafeAngle = diffAngle + Math.PI / 2;
+      // unit vector for direction of strafe at this moment
+      Translation2d strafeDir = new Translation2d(Math.cos(strafeAngle), Math.sin(strafeAngle));
+      // unit vector for direction towards target at this moment
+      Translation2d translationDir = new Translation2d(-Math.cos(diffAngle), -Math.sin(diffAngle));
+        
+      // yaw offset between april tag normal vector and robot vector pointing directly out from camera
+      // need to fix offset
+      // I beleive there is a logic error here
+      double yawOffset = ((diffAngle - 180) - robotPose.getRotation().getDegrees()) % 360;
+      System.out.println(yawOffset);
 
-        double newTranslationVal = Math.cos(yawOffset) * translationVal;
-        double newStrafeVal = Math.sin(yawOffset) * translationVal;
-        double newTranslationVal2 = Math.sin(yawOffset) * strafeVal;
-        double newStrafeVal2 = Math.cos(yawOffset) * strafeVal;
-        Translation2d translation = new Translation2d(newTranslationVal + newTranslationVal2, newStrafeVal + newStrafeVal2);
-        double rotation = 0.3 * clampPid * Constants.DrivetrainConstants.maxAngularVelocity;
-        
-        SwerveRequest request = new SwerveRequest.FieldCentric()
-            .withVelocityX(-translation.getX())
-            .withVelocityY(-translation.getY())
-            .withRotationalRate(rotation);
-        System.out.println("xOffset " + yawOffset);
-        System.out.println("Rotation " + rotation);
-        drivetrain.setControl(request);
-      }
+      // pid controlling rotation compensation
+      double pidOutput = pid.calculate(yawOffset);
+      double clampPid = pidOutput > 1.0 ? 1.0 : pidOutput;
+
+      // TODO: check max speed math
+      // strafe component of x component of final field oriented translation
+      double strafeX = strafeDir.getX() * strafeVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      // strafe component of y component of final field oriented translation
+      double strafeY = strafeDir.getY() * strafeVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      // forward/backward component of x component of final field oriented translation
+      double translationX = translationDir.getX() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      // forward/backward component of y component of final field oriented translation
+      double translationY = translationDir.getY() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      // rotation compensation power, currently unused
+      double rotation = 0.1 * yawOffset / 360.0 * Constants.DrivetrainConstants.maxAngularVelocity;
+      
+      // make drivetrain drive
+      SwerveRequest request = new SwerveRequest.FieldCentric()
+          .withVelocityX(strafeX + translationX)
+          .withVelocityY(strafeY + translationY)
+          .withRotationalRate(0.0); // use rotation once calculation is proper
+      drivetrain.setControl(request);
   } 
 
   // Called once the command ends or is interrupted.
