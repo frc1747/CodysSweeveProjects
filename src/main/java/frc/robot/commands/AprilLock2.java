@@ -95,7 +95,7 @@ public class AprilLock2 extends Command {
       SwerveRequest request = new SwerveRequest.FieldCentric()
           .withVelocityX(strafeX + translationX)
           .withVelocityY(strafeY + translationY)
-          .withRotationalRate(0.0); // use rotation once calculation is proper
+          .withRotationalRate(0.0); // use rotation once calculation i  s proper
       drivetrain.setControl(request);
   } 
 
