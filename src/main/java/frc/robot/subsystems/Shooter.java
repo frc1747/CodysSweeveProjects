@@ -44,7 +44,7 @@ public class Shooter extends SubsystemBase {
   public double shoot(double power){
     dutyCycle.Output = power;
     motorLeft.setControl(dutyCycle);
-    motorRight.setControl(dutyCycle);
+    motorRight.setControl(-dutyCycle);
     return power;
   }
 
