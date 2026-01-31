@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Commands.TurretAimToPose;
 import frc.robot.Commands.TurretGoToAngle;
+import frc.robot.Commands.TurretMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
@@ -49,7 +50,7 @@ public class RobotContainer {
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
-    public static Turret Turret = new Turret();
+    public static Turret turret = new Turret();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
@@ -83,10 +84,10 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.pov(0).whileTrue(new TurretGoToAngle(Turret, 0));
-        joystick.pov(90).whileTrue(new TurretGoToAngle(Turret, 270));
-        joystick.pov(180).whileTrue(new TurretGoToAngle(Turret, 180));
-        joystick.pov(270).whileTrue(new TurretGoToAngle(Turret, 90));
+        joystick.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
+        joystick.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
+        joystick.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
+        joystick.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
 
         //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(joystick.getLeftX())));
 
@@ -109,8 +110,8 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.rightBumper().whileTrue(new TurretAimToPose(Turret ,new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
-
+        joystick.rightBumper().whileTrue(new TurretAimToPose(turret ,new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
+        joystick.x().whileTrue( new TurretMove(turret, 1));
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

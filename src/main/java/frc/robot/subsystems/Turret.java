@@ -34,7 +34,7 @@ public class Turret extends SubsystemBase {
     motor = new TalonFXS(Constants.Turret.MOTOR_PORT);
     TalonFXSConfiguration config = new TalonFXSConfiguration();
     
-    config.Slot0.kP = 1.0;
+    config.Slot0.kP = 0.5;
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -61,7 +61,7 @@ public class Turret extends SubsystemBase {
 
 
   public double getTurretAngle() {
-    return encoder.get() * 360;
+    return encoder.get() * 360 * 11;
   }
 
   // aim at a pose2d
