@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AprilLock;
+import frc.robot.commands.AprilLock2;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -96,7 +97,10 @@ public class RobotContainer {
         ));
 
         new JoystickButton(driver, XboxController.Button.kRightBumper.value)
-            .whileTrue(new AprilLock(limelight, drivetrain, translationSup, strafeSup));
+            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup));
+
+        new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
+            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
