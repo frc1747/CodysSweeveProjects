@@ -24,9 +24,9 @@ public class Shooter extends SubsystemBase {
   
   public Shooter() {
 
-    TalonFXS motorLeft = new TalonFXS(Constants.Shooter.MOTOR_LEFT_PORT);
-    TalonFXS motorRight = new TalonFXS(Constants.Shooter.MOTOR_RIGHT_PORT);
-    TalonFXS motorHood = new TalonFXS(Constants.Shooter.MOTOR_HOOD_PORT);
+    this.motorLeft = new TalonFXS(Constants.Shooter.MOTOR_LEFT_PORT);
+    this.motorRight = new TalonFXS(Constants.Shooter.MOTOR_RIGHT_PORT);
+    this.motorHood = new TalonFXS(Constants.Shooter.MOTOR_HOOD_PORT);
 
     // the config for all the motors we should do differnt ones
     TalonFXSConfiguration config = new TalonFXSConfiguration();
@@ -42,9 +42,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public double shoot(double power){
-    dutyCycle.Output = power;
-    motorLeft.setControl(dutyCycle);
-    motorRight.setControl(-dutyCycle);
+    this.motorLeft.set(power);
+    this.motorRight.set(-power);
     return power;
   }
 
