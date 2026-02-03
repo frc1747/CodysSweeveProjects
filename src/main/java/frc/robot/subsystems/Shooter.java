@@ -14,8 +14,6 @@ import com.ctre.phoenix6.configs.TalonFXSConfigurator;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 public class Shooter extends SubsystemBase {
-  /** Creates a new Shooter. */
-  // idk what to caller the motors of the shooter
   // shooting dir is froward.
   private TalonFXS motorLeft;
   private TalonFXS motorRight;
@@ -41,14 +39,12 @@ public class Shooter extends SubsystemBase {
     motorRight.getConfigurator().apply(config);
   }
 
-  public double shoot(double power){
+  public void shoot(double power){
     this.motorLeft.set(power);
     this.motorRight.set(-power);
-    return power;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

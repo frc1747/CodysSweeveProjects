@@ -12,32 +12,26 @@ import frc.robot.subsystems.Turret;
 public class TurretMove extends Command {
   private Turret turret;
   private double speed;
-  /** Creates a new TurretGoToAngle. */
-  // boy pose
+
   public TurretMove(Turret turret,double speed) {
     this.turret = turret;
     this.speed = speed;
     addRequirements(turret);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     turret.basicSpin(speed);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     turret.basicSpin(0.0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

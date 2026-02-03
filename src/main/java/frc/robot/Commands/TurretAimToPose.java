@@ -14,33 +14,27 @@ public class TurretAimToPose extends Command {
   private double angle;
   private Pose2d TargetPose;
   private Pose2d BotPose;
-  /** Creates a new TurretGoToAngle. */
-  // boy pose
-  public TurretAimToPose(Turret turret,Pose2d BotPose ,Pose2d TargetPose) {
+
+  public TurretAimToPose(Turret turret, Pose2d botPose, Pose2d targetPose) {
     this.turret = turret;
     this.TargetPose = TargetPose;
     this.BotPose = BotPose;
     addRequirements(turret);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     System.out.println(turret.aimAtPose(this.BotPose,this.TargetPose));
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     turret.basicSpin(0.0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return  0 == turret.aimAtPose(this.BotPose,this.TargetPose);
