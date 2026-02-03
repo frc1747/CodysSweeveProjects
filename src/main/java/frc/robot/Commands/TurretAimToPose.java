@@ -14,7 +14,7 @@ public class TurretAimToPose extends Command {
   private double angle;
   private Pose2d TargetPose;
   private Pose2d BotPose;
-  // boy pose
+
   public TurretAimToPose(Turret turret, Pose2d botPose, Pose2d targetPose) {
     this.turret = turret;
     this.TargetPose = TargetPose;

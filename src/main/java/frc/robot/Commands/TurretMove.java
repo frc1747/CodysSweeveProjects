@@ -17,7 +17,6 @@ public class TurretMove extends Command {
     this.turret = turret;
     this.speed = speed;
     addRequirements(turret);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   @Override
