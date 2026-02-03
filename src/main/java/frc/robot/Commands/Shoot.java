@@ -16,24 +16,23 @@ public class Shoot extends Command {
   private Shooter shooter;
   private double power;
 
-  public Shoot(Shooter shooter ,double power) {
+  public Shoot(Shooter shooter, double power) {
     this.shooter = shooter;
     this.power = power;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.shooter);
+    addRequirements(shooter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void execute() {
     shooter.shoot(power);
   }
+
   @Override
   public void initialize() {
   }
-@Override
+
+  @Override
   public void end(boolean interrupted) {
-    shooter.shoot(0);
-    // not magic numbers
+    shooter.shoot(0.0);
   }
 }

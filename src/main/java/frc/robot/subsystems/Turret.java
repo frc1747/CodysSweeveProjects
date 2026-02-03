@@ -27,16 +27,13 @@ public class Turret extends SubsystemBase {
   // optimization for not creating new control object 50/sec
   private DutyCycleOut dutyCycle = new DutyCycleOut(0);
 
-  private final PIDController pid = new PIDController(0.015, 0.0, 0.001);
+  private final PIDController pid = new PIDController(Constants.Turret.PID_D, Constants.Turret.PID_D, Constants.Turret.PID_D);
 
 
   public Turret() {
     motor = new TalonFXS(Constants.Turret.MOTOR_PORT);
     TalonFXSConfiguration config = new TalonFXSConfiguration();
     
-    config.Slot0.kP = 0.5;
-    config.Slot0.kI = 0;
-    config.Slot0.kD = 0;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     config.Voltage
@@ -65,15 +62,14 @@ public class Turret extends SubsystemBase {
   }
 
   // aim at a pose2d
-  public double aimAtPose(Pose2d botPose , Pose2d TargetPose){
-  double opp = botPose.getY()- TargetPose.getY(); 
-  //chatgpt is to smart for this code
-  double adj = botPose.getX()- TargetPose.getX(); 
+  public double aimAtPose(Pose2d botPose, Pose2d TargetPose){
+  double opp = botPose.getY() - TargetPose.getY(); 
+  double adj = botPose.getX() - TargetPose.getX(); 
   // get the angle with basic trig
-  double DiffAngle = Math.toDegrees(Math.atan2(opp,adj));
-  goToAngle(DiffAngle);
+  double diffAngle = Math.toDegrees(Math.atan2(opp,adj));
+  goToAngle(diffAngle);
   // moving to the angle  
-  return DiffAngle;
+  return diffAngle;
   //returning the angle to see the error.
   }
 
@@ -83,7 +79,7 @@ public class Turret extends SubsystemBase {
     double output = pid.calculate(currentAngle, targetAngle);
 
     // Safety
-    output = MathUtil.clamp(output, -1.0, 1.0);
+    output = MathUtil.clamp(output, Constants.Turret.GO_TO_ANGLE_LOWER_SAFETY, Constants.Turret.GO_TO_ANGLE_HIGHER_SAFET);
 
     dutyCycle.Output = output;
     motor.setControl(dutyCycle);
