@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -33,6 +34,12 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.TurretAimToPose;
+import frc.robot.commands.TurretGoToAngle;
+import frc.robot.commands.TurretMove;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -63,6 +70,9 @@ public class RobotContainer {
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
+    public static Turret turret = new Turret();
+    public static Shooter shooter = new Shooter();
+
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
 
@@ -78,11 +88,12 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
+        /*drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             // new AprilLock(limelight, drivetrain, translationSup, strafeSup)
             new TeleopSwerve(drivetrain, translationSup, strafeSup, rotationSup)
         );
+        */
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -90,6 +101,13 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
+
+        joystick.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
+        joystick.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
+        joystick.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
+        joystick.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
+
+        //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(joystick.getLeftX())));
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
@@ -102,6 +120,7 @@ public class RobotContainer {
         new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
             .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup));
 
+        /*
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -109,10 +128,18 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+        */
+
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
+        joystick.rightBumper().whileTrue(new TurretAimToPose(turret ,new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
+
+        joystick.x().whileTrue( new TurretMove(turret, -.75));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        joystick.y().whileTrue( new Shoot( shooter , .40));
     }
 
     public Command getAutonomousCommand() {
