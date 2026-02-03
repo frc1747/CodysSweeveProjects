@@ -79,7 +79,7 @@ public class Turret extends SubsystemBase {
     double output = pid.calculate(currentAngle, targetAngle);
 
     // Safety
-    output = MathUtil.clamp(output, Constants.Turret.GO_TO_ANGLE_LOWER_SAFETY, Constants.Turret.GO_TO_ANGLE_HIGHER_SAFET);
+    output = MathUtil.clamp(output, Constants.Turret.GO_TO_ANGLE_LOWER_SAFETY, Constants.Turret.GO_TO_ANGLE_HIGHER_SAFETY);
 
     dutyCycle.Output = output;
     motor.setControl(dutyCycle);
