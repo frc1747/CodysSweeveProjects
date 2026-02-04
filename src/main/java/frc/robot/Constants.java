@@ -10,6 +10,8 @@ public class Constants {
         public static final double PID_D = 0;
         public static final double GO_TO_ANGLE_LOWER_SAFETY = -1;
         public static final double GO_TO_ANGLE_HIGHER_SAFETY = 1;
+        public static final double UPPER_LIMIT = 90;
+        public static final double LOWER_LIMIT = -90;
     }
     public static final class Shooter {
         public static final int MOTOR_LEFT_PORT = 41;
