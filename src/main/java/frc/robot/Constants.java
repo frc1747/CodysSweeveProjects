@@ -2,6 +2,12 @@ package frc.robot;
 
 import java.util.List;
 
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
@@ -50,13 +56,13 @@ public class Constants {
         public static final double STICK_DEADBAND = 0.05; 
     }
 
-    public static class DrivetrainConstants {
+    public static final class DrivetrainConstants {
         // TODO: Tune these later
         public static final double MAX_SPEED = 4.1;  // Max speed in m/s
         public static final double MAX_ACCEL = 4.1;  // Max acceleration in m/s
         public static final double maxAngularVelocity = 10.0;  // Rad/s
     }
-
+    
     public static class VisionConstants {
         public static final double FOV_HORIZONTAL = 62.5;
     }
