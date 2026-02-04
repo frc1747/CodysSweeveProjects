@@ -27,7 +27,7 @@ public class Turret extends SubsystemBase {
   // optimization for not creating new control object 50/sec
   private DutyCycleOut dutyCycle = new DutyCycleOut(0);
 
-  private final PIDController pid = new PIDController(Constants.Turret.PID_D, Constants.Turret.PID_D, Constants.Turret.PID_D);
+  private final PIDController pid = new PIDController(Constants.TurretConstants.PID_D, Constants.TurretConstants.PID_D, Constants.TurretConstants.PID_D);
 
 
   public Turret() {
@@ -79,7 +79,7 @@ public class Turret extends SubsystemBase {
     double output = pid.calculate(currentAngle, targetAngle);
 
     // Safety
-    output = MathUtil.clamp(output, Constants.Turret.GO_TO_ANGLE_LOWER_SAFETY, Constants.Turret.GO_TO_ANGLE_HIGHER_SAFETY);
+    output = MathUtil.clamp(output, Constants.TurretConstants.GO_TO_ANGLE_LOWER_SAFETY, Constants.TurretConstants.GO_TO_ANGLE_HIGHER_SAFETY);
 
     dutyCycle.Output = output;
     motor.setControl(dutyCycle);
