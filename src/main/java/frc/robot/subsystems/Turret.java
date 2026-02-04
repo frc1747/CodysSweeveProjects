@@ -63,14 +63,14 @@ public class Turret extends SubsystemBase {
 
   // aim at a pose2d
   public double aimAtPose(Pose2d botPose, Pose2d TargetPose){
-  double opp = botPose.getY() - TargetPose.getY(); 
-  double adj = botPose.getX() - TargetPose.getX(); 
-  // get the angle with basic trig
-  double diffAngle = Math.toDegrees(Math.atan2(opp,adj));
-  goToAngle(diffAngle);
-  // moving to the angle  
-  return diffAngle;
-  //returning the angle to see the error.
+    double opp = botPose.getY() - TargetPose.getY(); 
+    double adj = botPose.getX() - TargetPose.getX(); 
+    // get the angle with basic trig
+    double diffAngle = Math.toDegrees(Math.atan2(opp,adj));
+    goToAngle(diffAngle);
+    // moving to the angle  
+    return diffAngle;
+    //returning the angle to see the error.
   }
 
 
