@@ -88,12 +88,11 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        /*drivetrain.setDefaultCommand(
+        drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             // new AprilLock(limelight, drivetrain, translationSup, strafeSup)
             new TeleopSwerve(drivetrain, translationSup, strafeSup, rotationSup)
         );
-        */
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -139,7 +138,7 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.y().whileTrue( new Shoot( shooter , .40));
+        joystick.y().whileTrue( new Shoot( shooter , .60));
     }
 
     public Command getAutonomousCommand() {
