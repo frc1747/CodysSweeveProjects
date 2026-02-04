@@ -60,6 +60,7 @@ public class AprilLock2 extends Command {
       
       // difference between robot and april tag poses
       Translation2d diff = robotPose.getTranslation().minus(apriltagPose.getTranslation());
+      System.out.println("Diff: " + diff);
       // angle between diff and from vector(1, 0, 0)
       double diffAngle = Math.atan2(diff.getY(), diff.getX());
       // strafe angle is angle of a vector perpendicular to diff
@@ -71,9 +72,15 @@ public class AprilLock2 extends Command {
         
       // yaw offset between april tag normal vector and robot vector pointing directly out from camera
       // need to fix offset
-      // I beleive there is a logic error here
-      double yawOffset = ((diffAngle - 180) - robotPose.getRotation().getDegrees()) % 360;
-      System.out.println(yawOffset);
+      // I beleive there is a logic error here, not yet fixed
+      double yawOffset = Math.atan2(diff.getX(), diff.getY()) - robotPose.getRotation().getRadians() - Math.PI / 2; // May be sign issue
+      // if (yawOffset > Math.PI) {
+      //   yawOffset = Math.PI - yawOffset;
+      // } else if (yawOffset < -Math.PI) {
+      //   yawOffset = Math.PI + yawOffset;
+      // }
+      double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset)); // chatGPT, not sure if works
+      System.out.println("wrappedyaw: " + wrappedYaw);
 
       // pid controlling rotation compensation
       double pidOutput = pid.calculate(yawOffset);
@@ -89,13 +96,13 @@ public class AprilLock2 extends Command {
       // forward/backward component of y component of final field oriented translation
       double translationY = translationDir.getY() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
       // rotation compensation power, currently unused
-      double rotation = 0.1 * yawOffset / 360.0 * Constants.DrivetrainConstants.maxAngularVelocity;
+      double rotation = 0.3 * -wrappedYaw / (2 * Math.PI) * Constants.DrivetrainConstants.maxAngularVelocity; // May be sign issue
       
       // make drivetrain drive
       SwerveRequest request = new SwerveRequest.FieldCentric()
           .withVelocityX(strafeX + translationX)
           .withVelocityY(strafeY + translationY)
-          .withRotationalRate(0.0); // use rotation once calculation i  s proper
+          .withRotationalRate(rotation); // use rotation once calculation is proper
       drivetrain.setControl(request);
   } 
 

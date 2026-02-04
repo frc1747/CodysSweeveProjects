@@ -40,7 +40,7 @@ public class TeleopSwerve extends Command {
     SwerveRequest request = new SwerveRequest.RobotCentric()
             .withVelocityX(-translation.getX())
             .withVelocityY(-translation.getY())
-            .withRotationalRate(rotationSup.getAsDouble() * Constants.DrivetrainConstants.maxAngularVelocity);
+            .withRotationalRate(-rotationSup.getAsDouble() * Constants.DrivetrainConstants.maxAngularVelocity);
     drivetrain.setControl(request);
   }
 

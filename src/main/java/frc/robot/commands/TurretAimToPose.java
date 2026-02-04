@@ -12,13 +12,13 @@ import frc.robot.subsystems.Turret;
 public class TurretAimToPose extends Command {
   private Turret turret;
   private double angle;
-  private Pose2d TargetPose;
-  private Pose2d BotPose;
+  private Pose2d targetPose;
+  private Pose2d botPose;
 
   public TurretAimToPose(Turret turret, Pose2d botPose, Pose2d targetPose) {
     this.turret = turret;
-    this.TargetPose = TargetPose;
-    this.BotPose = BotPose;
+    this.targetPose = targetPose;
+    this.botPose = botPose;
     addRequirements(turret);
   }
 
@@ -27,7 +27,7 @@ public class TurretAimToPose extends Command {
 
   @Override
   public void execute() {
-    System.out.println(turret.aimAtPose(this.BotPose,this.TargetPose));
+    System.out.println(turret.aimAtPose(this.botPose,this.targetPose));
   }
 
   @Override
@@ -37,6 +37,6 @@ public class TurretAimToPose extends Command {
 
   @Override
   public boolean isFinished() {
-    return  0 == turret.aimAtPose(this.BotPose,this.TargetPose);
+    return  0 == turret.aimAtPose(this.botPose,this.targetPose);
   }
 }
