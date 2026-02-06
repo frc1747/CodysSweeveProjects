@@ -4,9 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfigurator;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -50,12 +50,10 @@ public class Turret extends SubsystemBase {
     pid.setTolerance(1.0);
   }
 
-
   public void basicSpin(double power) {
     dutyCycle.Output = power;
     motor.setControl(dutyCycle);
   }
-
 
   public double getTurretAngle() {
     return encoder.get() * 360 * 11;
@@ -73,19 +71,17 @@ public class Turret extends SubsystemBase {
     //returning the angle to see the error.
   }
 
-
   public void goToAngle(double targetAngle) {
     double currentAngle = getTurretAngle();
     double output = pid.calculate(currentAngle, targetAngle);
-
-    if ( (Constants.Turret.LOWER_LIMIT <= targetAngle) && ( targetAngle <= Constants.Turret.UPPER_LIMIT)){
-      return;
-    }
-
     // Safety
     output = MathUtil.clamp(output, Constants.Turret.GO_TO_ANGLE_LOWER_SAFETY, Constants.Turret.GO_TO_ANGLE_HIGHER_SAFETY);
-
     dutyCycle.Output = output;
+
+    if (((Constants.Turret.LOWER_LIMIT <= targetAngle) && (targetAngle <= Constants.Turret.UPPER_LIMIT))){
+      dutyCycle.Output = 0;
+      motor.setControl(dutyCycle);
+    }
     motor.setControl(dutyCycle);
   }
 
