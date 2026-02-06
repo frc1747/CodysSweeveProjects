@@ -114,10 +114,7 @@ public class RobotContainer {
         ));
 
         new JoystickButton(driver, XboxController.Button.kRightBumper.value)
-            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup));
-
-        new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
-            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup));
+            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup, rotationSup));
 
         /*
         // Run SysId routines when holding back/start and X/Y.

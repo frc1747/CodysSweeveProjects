@@ -27,15 +27,17 @@ public class AprilLock2 extends Command {
   CommandSwerveDrivetrain drivetrain;
   private DoubleSupplier translationSup;
   private DoubleSupplier strafeSup;
+  private DoubleSupplier rotationSup;
   private PIDController pid;
 
   // TODO: fix starting pose of robot
-  public AprilLock2(LimeLight limeLight, CommandSwerveDrivetrain drivetrain, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
+  public AprilLock2(LimeLight limeLight, CommandSwerveDrivetrain drivetrain, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
     this.limelight = limeLight;
     this.drivetrain = drivetrain;
     this.translationSup = translationSup;
     this.strafeSup = strafeSup;
-    this.pid = new PIDController(0.9, 0.02, 0.05); // TODO: tune pid
+    this.rotationSup = rotationSup;
+    this.pid = new PIDController(1.0, 0.01, 0.03); // TODO: tune pid
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -71,20 +73,19 @@ public class AprilLock2 extends Command {
       Translation2d translationDir = new Translation2d(-Math.cos(diffAngle), -Math.sin(diffAngle));
         
       // yaw offset between april tag normal vector and robot vector pointing directly out from camera
-      // need to fix offset
-      // I beleive there is a logic error here, not yet fixed
-      double yawOffset = Math.atan2(diff.getX(), diff.getY()) - robotPose.getRotation().getRadians() - Math.PI / 2; // May be sign issue
-      // if (yawOffset > Math.PI) {
-      //   yawOffset = Math.PI - yawOffset;
-      // } else if (yawOffset < -Math.PI) {
-      //   yawOffset = Math.PI + yawOffset;
-      // }
-      double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset)); // chatGPT, not sure if works
+      double phi = Math.atan2(diff.getY(), diff.getX());
+      double yawOffset = phi - robotPose.getRotation().getRadians() - Math.PI;
+      double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset));
+      System.out.println("robotPose: " + robotPose);
+      System.out.println("yawOffset: " + yawOffset);
       System.out.println("wrappedyaw: " + wrappedYaw);
 
       // pid controlling rotation compensation
-      double pidOutput = pid.calculate(yawOffset);
-      double clampPid = pidOutput > 1.0 ? 1.0 : pidOutput;
+      double pidOutput = -1 * pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
+      double clampPid = pidOutput > 0.5 ? 0.5 : pidOutput;
+      clampPid = clampPid < -0.5 ? -0.5 : clampPid;
+      System.out.println("pidOutput: " + pidOutput);
+      System.out.println("clampPid: " + clampPid);
 
       // TODO: check max speed math
       // strafe component of x component of final field oriented translation
@@ -95,14 +96,14 @@ public class AprilLock2 extends Command {
       double translationX = translationDir.getX() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
       // forward/backward component of y component of final field oriented translation
       double translationY = translationDir.getY() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
-      // rotation compensation power, currently unused
-      double rotation = 0.3 * -wrappedYaw / (2 * Math.PI) * Constants.DrivetrainConstants.maxAngularVelocity; // May be sign issue
+      // rotation compensation power
+      double rotation = clampPid * Constants.DrivetrainConstants.maxAngularVelocity;
       
       // make drivetrain drive
       SwerveRequest request = new SwerveRequest.FieldCentric()
           .withVelocityX(strafeX + translationX)
           .withVelocityY(strafeY + translationY)
-          .withRotationalRate(rotation); // use rotation once calculation is proper
+          .withRotationalRate(rotation);
       drivetrain.setControl(request);
   } 
 

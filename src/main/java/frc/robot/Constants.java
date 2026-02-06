@@ -57,8 +57,8 @@ public class Constants {
     }
 
     public static final class DrivetrainConstants {
-        // TODO: Tune these later
-        public static final double MAX_SPEED = 4.1;  // Max speed in m/s
+        // TODO: Tune these later                  // v temporary slowing 
+        public static final double MAX_SPEED = 4.1 * 0.5;  // Max speed in m/s
         public static final double MAX_ACCEL = 4.1;  // Max acceleration in m/s
         public static final double maxAngularVelocity = 10.0;  // Rad/s
     }
