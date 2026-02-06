@@ -12,15 +12,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Kicker extends SubsystemBase {
   /** Creates a new Kicker. */
 
-  private TalonFX shooter;
+  private TalonFX frontShooter;
+  private TalonFX backShooter;
   
   public Kicker() {
-    shooter = new TalonFX(56); // PLEASE CHANGE THIS TO THE ACTUAL ID. THIS IS ARBITRARY. PLEASE!!! I BEG YOU!!! PLEASE :(!!!
-    shooter.setNeutralMode(NeutralModeValue.Brake);
+    frontShooter = new TalonFX(4); // IDs are NOT set in stone
+    frontShooter.setNeutralMode(NeutralModeValue.Brake);
+    backShooter = new TalonFX(5); // this one too
+    backShooter.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void SetKickerPower(double power) {
-    shooter.set(power);
+  public void SetKickerPower(double frontPower, double backPower) {
+    frontShooter.set(frontPower);
+    backShooter.set(backPower);
   }
 
 

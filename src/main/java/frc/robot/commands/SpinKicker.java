@@ -24,7 +24,7 @@ public class SpinKicker extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.kicker.SetKickerPower(10); // CHANGE THIS. THIS IS ARBITRARY. PLEASE!!!! PLEASE!! D:
+    this.kicker.SetKickerPower(0.2, 0.2); // CHANGE THIS. THIS IS ARBITRARY. PLEASE!!!! PLEASE!! D:
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,7 +34,7 @@ public class SpinKicker extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.kicker.SetKickerPower(0);
+    this.kicker.SetKickerPower(0.0, 0.0);
   }
 
   // Returns true when the command should end.
