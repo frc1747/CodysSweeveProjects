@@ -15,6 +15,7 @@ import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -57,12 +58,12 @@ public class AprilLock2 extends Command {
       double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.ControllerConstants.STICK_DEADBAND);
         
       // pose of apriltag on field, rotation represents angle of its normal vector
-      Pose2d apriltagPose = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
-      Pose2d robotPose = drivetrain.getState().Pose; 
+      Pose2d apriltagPose = new Pose2d(new Translation2d(8.7741252, 4.0259508), new Rotation2d(0.0));
+      Pose2d robotPose = drivetrain.getState().Pose;
       
       // difference between robot and april tag poses
       Translation2d diff = robotPose.getTranslation().minus(apriltagPose.getTranslation());
-      System.out.println("Diff: " + diff);
+      // System.out.println("Diff: " + diff);
       // angle between diff and from vector(1, 0, 0)
       double diffAngle = Math.atan2(diff.getY(), diff.getX());
       // strafe angle is angle of a vector perpendicular to diff
@@ -77,15 +78,15 @@ public class AprilLock2 extends Command {
       double yawOffset = phi - robotPose.getRotation().getRadians() - Math.PI;
       double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset));
       System.out.println("robotPose: " + robotPose);
-      System.out.println("yawOffset: " + yawOffset);
+      // System.out.println("yawOffset: " + yawOffset);
       System.out.println("wrappedyaw: " + wrappedYaw);
 
       // pid controlling rotation compensation
       double pidOutput = -1 * pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
       double clampPid = pidOutput > 0.5 ? 0.5 : pidOutput;
       clampPid = clampPid < -0.5 ? -0.5 : clampPid;
-      System.out.println("pidOutput: " + pidOutput);
-      System.out.println("clampPid: " + clampPid);
+      // System.out.println("pidOutput: " + pidOutput);
+      // System.out.println("clampPid: " + clampPid);
 
       // TODO: check max speed math
       // strafe component of x component of final field oriented translation
