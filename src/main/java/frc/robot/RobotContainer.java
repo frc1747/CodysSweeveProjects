@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.IntakeOut;
+import frc.robot.commands.IntakeSpin;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAimToPose;
 import frc.robot.commands.TurretGoToAngle;
@@ -114,7 +116,9 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        
+        driver.leftTrigger().onTrue(new IntakeSpin(.5));
+        driver.rightTrigger().onTrue(new IntakeOut(.5));
+
         operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 
         operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
