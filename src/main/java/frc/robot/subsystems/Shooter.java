@@ -11,10 +11,14 @@ import frc.robot.Constants;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+
+import java.util.Dictionary;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfigurator;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
+
 
 public class Shooter extends SubsystemBase {
   // shooting dir is froward.
@@ -24,6 +28,8 @@ public class Shooter extends SubsystemBase {
   private DutyCycleOut dutyCycleShooter = new DutyCycleOut(0);
   private DutyCycleOut dutyCycleHood = new DutyCycleOut(0);
   private DutyCycleEncoder encoder;
+  private Dictionary<Double[], Double> SetShootDistancePoints;
+  private double[][] listOfSetPoints;
 
   public Shooter() {
 
@@ -74,8 +80,6 @@ public class Shooter extends SubsystemBase {
   public double getHoodAngle(){
     return (encoder.get()  + Constants.Shooter.ENCODER_OFFSET ) * 360;
   }
-
-  
 
   @Override
   public void periodic() {
