@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ClimberMove;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAimToPose;
 import frc.robot.commands.TurretGoToAngle;
@@ -31,6 +32,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Climber;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -55,6 +57,7 @@ public class RobotContainer {
 
     public static Turret turret = new Turret();
     public static Shooter shooter = new Shooter();
+    public static Climber climber = new Climber();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
@@ -120,8 +123,11 @@ public class RobotContainer {
         operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
         operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        operator.y().and(operator.a().negate()).onTrue(new ClimberMove(climber, 0.2));
+        operator.a().and(operator.y().negate()).onTrue(new ClimberMove(climber, -0.2));
 
+        drivetrain.registerTelemetry(logger::telemeterize);
+        
         driver.y().whileTrue( new Shoot( shooter , .40));
     }
 
