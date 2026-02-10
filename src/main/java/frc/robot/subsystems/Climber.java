@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
@@ -13,15 +14,21 @@ public class Climber extends SubsystemBase {
 
   private TalonFX rightMotor;
   private TalonFX leftMotor;
+  private DigitalInput limitSwitch;
 
   public Climber() {
-    this.rightMotor = new TalonFX(0); // CHANGE THIS HERE
+    this.rightMotor = new TalonFX(0); // CHANGE THIS HERE 
     this.leftMotor = new TalonFX(0); // CHANGE THIS TOO
+    this.limitSwitch = new DigitalInput(1); // CHANGE THIS ASWELL PLEASE D:
   }
 
   public void SetClimberPower(double power) {
     this.rightMotor.set(power);
     this.leftMotor.set(power);
+  }
+
+  public boolean GetSwitchPresed() {
+    return limitSwitch.get();
   }
 
   @Override
