@@ -44,6 +44,10 @@ public class Shooter extends SubsystemBase {
     this.motorRight.set(-power);
   }
 
+  public void SetHoodPower(double power) {
+    this.motorHood.set(power);
+  }
+
   @Override
   public void periodic() {
   }

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.Hood;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAimToPose;
 import frc.robot.commands.TurretGoToAngle;
@@ -119,6 +120,9 @@ public class RobotContainer {
 
         operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
         operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
+           
+        operator.b().and(operator.a().negate()).whileTrue(new Hood(shooter, 0.2)); // CHANGE THIS
+        operator.a().and(operator.b().negate()).whileTrue(new Hood(shooter, -0.2)); // CHNAGE THIS TOO
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
