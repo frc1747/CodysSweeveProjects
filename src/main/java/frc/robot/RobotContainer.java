@@ -58,12 +58,11 @@ public class RobotContainer {
     private final LimeLight limelight = new LimeLight("limelight-front");
 
     // control
-    private final Joystick driver = new Joystick(0);
+    private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
     private final DoubleSupplier translationSup = () -> driver.getRawAxis(XboxController.Axis.kLeftY.value); // forward/backward on left stick
     private final DoubleSupplier strafeSup = () -> driver.getRawAxis(XboxController.Axis.kLeftX.value); // right/left on left stick
     private final DoubleSupplier rotationSup = () -> driver.getRawAxis(XboxController.Axis.kRightX.value); // right/left on right stick 
-
-    private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -101,41 +100,42 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
-        joystick.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
-        joystick.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
-        joystick.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
+        driver.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
+        driver.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
+        driver.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
+        driver.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
 
-        //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(joystick.getLeftX())));
+        //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(driver.getLeftX())));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
 
-        new JoystickButton(driver, XboxController.Button.kRightBumper.value)
+        driver.rightBumper()
             .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup, rotationSup));
 
         /*
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         */
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        joystick.rightBumper().whileTrue(new TurretAimToPose(turret ,new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
+        operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 
-        joystick.x().whileTrue( new TurretMove(turret, -.75));
+        operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
+        operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.y().whileTrue( new Shoot( shooter , .60));
+        driver.y().whileTrue( new Shoot( shooter , .40));
     }
 
     public Command getAutonomousCommand() {
