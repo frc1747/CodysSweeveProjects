@@ -10,15 +10,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
 public class Constants {
-    public static final class Turret {
-        public static final int MOTOR_PORT = 0;
-        public static final int ENCODER_PORT = 0;
-    }
-
     public static final class Vision {
         // Local hostnames of the unique Limelights on the system
         // WARNING: IF YOU CHANGE OUT THE HARDWARE, ENSURE TO PROPERLY
@@ -48,22 +44,33 @@ public class Constants {
 
         // Limelight horizontal Field of view in degrees
         public static final double FOV_HORIZONTAL = 62.5;
+
+        // AprilLock2 rotation compensation pid values
+        public static final double APRIL_LOCK_P = 1.0;
+        public static final double APRIL_LOCK_I = 0.01;
+        public static final double APRIL_LOCK_D = 0.03;
+        // maximum magnitude of PID output
+        public static final double APRIL_LOCK_PID_CLAMP = 0.5;
+
+        // targetting locations (maybe should be Pose2d objects, but those are mutable so maybe not?)
+        public static final double FIELD_CENTER_X = 8.7741252;
+        public static final double FIELD_CENTER_Y = 4.0259508;
     }
 
-    public static class ControllerConstants {
+    public static class Controller {
         public static final int DRIVER_CONTROLLER_PORT = 0;
         public static final int OPERATOR_CONTROLLER_PORT = 1;
         public static final double STICK_DEADBAND = 0.05; 
     }
 
-    public static final class DrivetrainConstants {
+    public static final class Drivetrain {
         // TODO: Tune these later                  // v temporary slowing 
         public static final double MAX_SPEED = 4.1 * 0.5;  // Max speed in m/s
         public static final double MAX_ACCEL = 4.1;  // Max acceleration in m/s
         public static final double maxAngularVelocity = 10.0;  // Rad/s
     }
 
-    public static final class TurretConstants {
+    public static final class Turret {
         public static final int MOTOR_PORT = 59;
         public static final int ENCODER_PORT = 0;
         public static final double TURRETRATIO = 11; // the number of teeth on the turret's gear is 110 and the motor has a gear with 10 teeth
@@ -78,9 +85,5 @@ public class Constants {
         public static final int MOTOR_LEFT_PORT = 41;
         public static final int MOTOR_RIGHT_PORT = 42;
         public static final int MOTOR_HOOD_PORT = 40;
-    }
-
-    public static final class VisionConstants {
-        public static final double FOV_HORIZONTAL = 62.5;
     }
 }

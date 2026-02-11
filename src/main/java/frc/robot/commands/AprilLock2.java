@@ -24,12 +24,12 @@ import frc.robot.subsystems.LimeLight;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AprilLock2 extends Command {
   /** Creates a new FaceObject. */
-  LimeLight limelight;
-  CommandSwerveDrivetrain drivetrain;
-  private DoubleSupplier translationSup;
-  private DoubleSupplier strafeSup;
-  private DoubleSupplier rotationSup;
-  private PIDController pid;
+  private final LimeLight limelight;
+  private final CommandSwerveDrivetrain drivetrain;
+  private final DoubleSupplier translationSup;
+  private final DoubleSupplier strafeSup;
+  private final PIDController pid;
+  private final SwerveRequest.FieldCentric swerveRequest;
 
   // TODO: fix starting pose of robot
   public AprilLock2(LimeLight limeLight, CommandSwerveDrivetrain drivetrain, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
@@ -37,8 +37,8 @@ public class AprilLock2 extends Command {
     this.drivetrain = drivetrain;
     this.translationSup = translationSup;
     this.strafeSup = strafeSup;
-    this.rotationSup = rotationSup;
-    this.pid = new PIDController(1.0, 0.01, 0.03); // TODO: tune pid
+    this.pid = new PIDController(Constants.Vision.APRIL_LOCK_P, Constants.Vision.APRIL_LOCK_I, Constants.Vision.APRIL_LOCK_D);
+    this.swerveRequest = new SwerveRequest.FieldCentric();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -53,12 +53,12 @@ public class AprilLock2 extends Command {
   public void execute() {
       // apply deadzone
       // translation value is forward/backward on left joystick
-      double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.ControllerConstants.STICK_DEADBAND);
+      double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Controller.STICK_DEADBAND);
       // strafe value is left/right on left joystick
-      double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.ControllerConstants.STICK_DEADBAND);
+      double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.Controller.STICK_DEADBAND);
         
       // pose of apriltag on field, rotation represents angle of its normal vector
-      Pose2d apriltagPose = new Pose2d(new Translation2d(8.7741252, 4.0259508), new Rotation2d(0.0));
+      Pose2d apriltagPose = new Pose2d(new Translation2d(Constants.Vision.FIELD_CENTER_X, Constants.Vision.FIELD_CENTER_Y), new Rotation2d(0.0));
       Pose2d robotPose = drivetrain.getState().Pose;
       
       // difference between robot and april tag poses
@@ -83,37 +83,35 @@ public class AprilLock2 extends Command {
 
       // pid controlling rotation compensation
       double pidOutput = -1 * pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
-      double clampPid = pidOutput > 0.5 ? 0.5 : pidOutput;
-      clampPid = clampPid < -0.5 ? -0.5 : clampPid;
+      double clampPid = pidOutput > Constants.Vision.APRIL_LOCK_PID_CLAMP ? Constants.Vision.APRIL_LOCK_PID_CLAMP : pidOutput;
+      clampPid = clampPid < -Constants.Vision.APRIL_LOCK_PID_CLAMP ? -Constants.Vision.APRIL_LOCK_PID_CLAMP : clampPid;
       // System.out.println("pidOutput: " + pidOutput);
       // System.out.println("clampPid: " + clampPid);
 
       // TODO: check max speed math
       // strafe component of x component of final field oriented translation
-      double strafeX = strafeDir.getX() * strafeVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      double strafeX = strafeDir.getX() * strafeVal * Constants.Drivetrain.MAX_SPEED * 0.5;
       // strafe component of y component of final field oriented translation
-      double strafeY = strafeDir.getY() * strafeVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      double strafeY = strafeDir.getY() * strafeVal * Constants.Drivetrain.MAX_SPEED * 0.5;
       // forward/backward component of x component of final field oriented translation
-      double translationX = translationDir.getX() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      double translationX = translationDir.getX() * translationVal * Constants.Drivetrain.MAX_SPEED * 0.5;
       // forward/backward component of y component of final field oriented translation
-      double translationY = translationDir.getY() * translationVal * Constants.DrivetrainConstants.MAX_SPEED * 0.5;
+      double translationY = translationDir.getY() * translationVal * Constants.Drivetrain.MAX_SPEED * 0.5;
       // rotation compensation power
-      double rotation = clampPid * Constants.DrivetrainConstants.maxAngularVelocity;
+      double rotation = clampPid * Constants.Drivetrain.maxAngularVelocity;
       
       // make drivetrain drive
-      SwerveRequest request = new SwerveRequest.FieldCentric()
+      drivetrain.setControl(
+        swerveRequest
           .withVelocityX(strafeX + translationX)
           .withVelocityY(strafeY + translationY)
-          .withRotationalRate(rotation);
-      drivetrain.setControl(request);
+          .withRotationalRate(rotation)
+      );
   } 
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    // stop drivetrain when command ends
-    // this.drivetrain.simpleDrive(new Translation2d(0, 0), 0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

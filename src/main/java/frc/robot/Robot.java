@@ -14,19 +14,14 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  private final Field2d field;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    field = new Field2d();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    field.setRobotPose(m_robotContainer.drivetrain.getState().Pose);
-    SmartDashboard.putData(field);
-    System.out.println("robotPose: " + m_robotContainer.drivetrain.getState().Pose);
   }
 
   @Override

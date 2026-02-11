@@ -10,7 +10,6 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -26,11 +25,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -282,6 +283,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         addLimelightMeasurement();
+
+        RobotContainer.field.setRobotPose(getState().Pose);
+        SmartDashboard.putData(RobotContainer.field);
     }
 
     private void startSimThread() {
@@ -357,7 +361,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double yawDeg = getState().Pose.getRotation().getDegrees();
         LimelightHelpers.SetRobotOrientation(limelight, yawDeg, 0, 0, 0, 0, 0);
 
-        var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
         System.out.println("Mt2: " + mt2.pose);
 
         // Did we actually receive a MetaTag2 instance and if we did, did it see any tags?

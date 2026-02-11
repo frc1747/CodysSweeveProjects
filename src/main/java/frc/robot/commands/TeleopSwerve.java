@@ -19,6 +19,7 @@ public class TeleopSwerve extends Command {
   private final DoubleSupplier translationSup;
   private final DoubleSupplier strafeSup;
   private final DoubleSupplier rotationSup;
+  private final SwerveRequest.FieldCentric swerveRequest;
 
   /** Creates a new TeleopSwerve. */
   public TeleopSwerve(CommandSwerveDrivetrain drivetrain, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
@@ -26,6 +27,8 @@ public class TeleopSwerve extends Command {
     this.translationSup = translationSup;
     this.strafeSup = strafeSup;
     this.rotationSup = rotationSup;
+    // extra parameters here?
+    this.swerveRequest= new SwerveRequest.FieldCentric();
     addRequirements(drivetrain);
   }
 
@@ -36,22 +39,23 @@ public class TeleopSwerve extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d translation = new Translation2d(translationSup.getAsDouble(), strafeSup.getAsDouble()).times(Constants.DrivetrainConstants.MAX_SPEED);
-    SwerveRequest request = new SwerveRequest.RobotCentric()
-            .withVelocityX(-translation.getX())
-            .withVelocityY(-translation.getY())
-            .withRotationalRate(-rotationSup.getAsDouble() * Constants.DrivetrainConstants.maxAngularVelocity);
-    drivetrain.setControl(request);
+    drivetrain.setControl( 
+      swerveRequest
+        .withVelocityX(-translationSup.getAsDouble() * Constants.Drivetrain.MAX_SPEED)
+        .withVelocityY(-strafeSup.getAsDouble() * Constants.Drivetrain.MAX_SPEED)
+        .withRotationalRate(-rotationSup.getAsDouble() * Constants.Drivetrain.maxAngularVelocity)
+    );
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SwerveRequest request = new SwerveRequest.RobotCentric()
-            .withVelocityX(0.0)
-            .withVelocityY(0.0)
-            .withRotationalRate(0.0);
-    drivetrain.setControl(request);
+    drivetrain.setControl( 
+      swerveRequest
+        .withVelocityX(0.0)
+        .withVelocityY(0.0)
+        .withRotationalRate(0.0)
+    );
   }
 
   // Returns true when the command should end.
