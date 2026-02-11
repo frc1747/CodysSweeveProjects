@@ -349,6 +349,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
+    // will return pose of turret relative to field
+    // public Pose2d getTurretPose() {
+    // 
+    // }
+
 
     // ****** ADDITIONAL METHODS TO SUPPORT VISION PROCESSING *******
 
