@@ -18,14 +18,14 @@ public class IntakeSpin extends Command {
             }
             @Override
     public void initialize() {
-        this.intake.SetIntakePower(2);
+        this.intake.SetIntakeWheelPower(2);
     }
     @Override
     public void execute() {}
 
     @Override
     public void end(boolean interrupted) {
-        this.intake.SetIntakePower(0);
+        this.intake.SetIntakeWheelPower(0);
     }
     @Override
     public boolean isFinished() {
