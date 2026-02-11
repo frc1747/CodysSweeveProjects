@@ -18,6 +18,12 @@ public class Constants {
         public static final int MOTOR_RIGHT_PORT = 42;
         public static final int MOTOR_HOOD_PORT = 40;
         public static final int ENCODER_PORT = 1; // needs to be set
-        public static final int ENCODER_OFFSET = .2; // needs to be set o7
+        public static final double ENCODER_OFFSET = .2; // needs to be set o7
+        public static final double SURFACE_A = 0;
+        public static final double SURFACE_B = 0;
+        public static final double SURFACE_C = 0;
+        public static final double SURFACE_D = 0;
+        public static final double SURFACE_E = 0;
+        public static final double SURFACE_F = 0;
     }
 }

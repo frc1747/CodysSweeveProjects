@@ -4,20 +4,17 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import com.ctre.phoenix6.hardware.TalonFXS;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
-
 import java.util.Dictionary;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfigurator;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 public class Shooter extends SubsystemBase {
@@ -80,6 +77,14 @@ public class Shooter extends SubsystemBase {
   public double getHoodAngle(){
     return (encoder.get()  + Constants.Shooter.ENCODER_OFFSET ) * 360;
   }
+
+  public double autoAimSurfaceGetZ(double x, double y){
+    return Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_D*x**2 + Constants.Shooter.SURFACE_E*y**2 + Constants.Shooter.SURFACE_F*x*y
+  }
+
+  
+  
+
 
   @Override
   public void periodic() {
