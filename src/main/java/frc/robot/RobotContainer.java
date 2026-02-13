@@ -136,8 +136,9 @@ public class RobotContainer {
         
         operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 
-        operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
-        operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
+        // TODO: change 0.75 values to constants
+        operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.2));
+        operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, .2));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

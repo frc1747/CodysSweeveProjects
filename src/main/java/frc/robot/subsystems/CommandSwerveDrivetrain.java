@@ -363,7 +363,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         LimelightHelpers.SetRobotOrientation(limelight, yawDeg, 0, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
-        System.out.println("Mt2: " + mt2.pose);
 
         // Did we actually receive a MetaTag2 instance and if we did, did it see any tags?
         if (mt2 != null && mt2.tagCount > 0) {
