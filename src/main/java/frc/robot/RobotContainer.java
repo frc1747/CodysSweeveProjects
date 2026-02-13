@@ -42,8 +42,9 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    // why is this not in  constants? i'll move it soon
+    private static double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -55,7 +56,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     // limelight
-    private final LimeLight limelight = new LimeLight("limelight-front");
+    private static final LimeLight limelight = new LimeLight("limelight-front");
 
     // control
     private final CommandXboxController driver = new CommandXboxController(0);
@@ -64,7 +65,7 @@ public class RobotContainer {
     private final DoubleSupplier strafeSup = () -> driver.getRawAxis(XboxController.Axis.kLeftX.value); // right/left on left stick
     private final DoubleSupplier rotationSup = () -> driver.getRawAxis(XboxController.Axis.kRightX.value); // right/left on right stick 
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // field 
     // should it be public?
@@ -73,8 +74,8 @@ public class RobotContainer {
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
-    public static Turret turret = new Turret();
-    public static Shooter shooter = new Shooter();
+    public static final Turret turret = new Turret();
+    public static final Shooter shooter = new Shooter();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));

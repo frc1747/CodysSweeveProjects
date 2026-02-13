@@ -15,10 +15,13 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Turret extends SubsystemBase {
   private TalonFXS motor;
@@ -57,8 +60,27 @@ public class Turret extends SubsystemBase {
   }
 
 
+  // degrees
   public double getTurretAngle() {
     return encoder.get() * 360 * 11;
+  }
+
+  // returns pose of turret relative to field (absolute)
+  public Pose2d getAbsTurretPose() {
+      Pose2d robotPose = RobotContainer.drivetrain.getState().Pose;
+      Rotation2d robotRotation = robotPose.getRotation();
+      Translation2d robotLoc = robotPose.getTranslation();
+      // unit vector pointing in the direction the robot is facing
+      Translation2d robotDirVector = new Translation2d(Math.cos(robotRotation.getRadians()), Math.sin(robotRotation.getRadians()));
+      // location of turret relative to bot center
+      Translation2d relativeTurretLoc = robotDirVector.times(Constants.Turret.DIST_TO_BOT_CENTER);
+      // location of turret raltive to field
+      Translation2d absoluteTurretLoc = robotLoc.plus(relativeTurretLoc);
+      // rotation of turret relative to field
+      Rotation2d relativeTurretRotation = new Rotation2d(getTurretAngle() * Math.PI / 180.0); // how?
+      Rotation2d absoluteTurretRotation = robotRotation.plus(relativeTurretRotation);
+      Pose2d absoluteTurretPose = new Pose2d(absoluteTurretLoc, absoluteTurretRotation);
+      return absoluteTurretPose;
   }
 
   // aim at a pose2d
