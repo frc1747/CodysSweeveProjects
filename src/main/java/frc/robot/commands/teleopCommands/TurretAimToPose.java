@@ -2,20 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.teleopCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TurretMove extends Command {
+public class TurretAimToPose extends Command {
   private Turret turret;
-  private double speed;
+  private double angle;
+  private Pose2d targetPose;
+  private Pose2d botPose;
 
-  public TurretMove(Turret turret,double speed) {
+  public TurretAimToPose(Turret turret, Pose2d botPose, Pose2d targetPose) {
     this.turret = turret;
-    this.speed = speed;
+    this.targetPose = targetPose;
+    this.botPose = botPose;
     addRequirements(turret);
   }
 
@@ -24,7 +27,7 @@ public class TurretMove extends Command {
 
   @Override
   public void execute() {
-    turret.basicSpin(speed);
+    System.out.println(turret.aimAtPose(this.botPose,this.targetPose));
   }
 
   @Override
@@ -34,6 +37,6 @@ public class TurretMove extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return  0 == turret.aimAtPose(this.botPose,this.targetPose);
   }
 }

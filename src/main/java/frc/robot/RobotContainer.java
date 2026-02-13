@@ -23,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.TurretAimToPose;
-import frc.robot.commands.TurretGoToAngle;
-import frc.robot.commands.TurretMove;
+import frc.robot.commands.teleopCommands.Shoot;
+import frc.robot.commands.teleopCommands.TurretAimToPose;
+import frc.robot.commands.teleopCommands.TurretGoToAngle;
+import frc.robot.commands.teleopCommands.TurretMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
@@ -64,6 +64,8 @@ public class RobotContainer {
 
         configureBindings();
 
+        NamedCommands.registerCommand("Shoot", getAutonomousCommand());
+        NamedCommands.registerCommand("TurretMove", new TurretMove(turret, .75));
         // Warmup PathPlanner to avoid Java pauses
         CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
     }
