@@ -25,5 +25,6 @@ public class Constants {
         public static final double SURFACE_D = 0;
         public static final double SURFACE_E = 0;
         public static final double SURFACE_F = 0;
+        public static final double MAX_AUTOSHOOT_POWER =.85;
     }
 }

@@ -79,8 +79,43 @@ public class Shooter extends SubsystemBase {
   }
 
   public double autoAimSurfaceGetZ(double x, double y){
-    return Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_D*x**2 + Constants.Shooter.SURFACE_E*y**2 + Constants.Shooter.SURFACE_F*x*y
+    return Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_D*Math.pow(x,2) + Constants.Shooter.SURFACE_E*Math.pow(y,2) + Constants.Shooter.SURFACE_F*x*y;
   }
+
+  public double getSpeedNeededFromAngle(double y, double z ){
+    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_E*Math.pow(y,2) +- z;
+    double B =  Constants.Shooter.SURFACE_B + Constants.Shooter.SURFACE_F;
+    double A = Constants.Shooter.SURFACE_D;
+    double aws = (- B + Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A; // we need to see if it's postive or negative
+    if (aws > 0) return aws;
+    return (- B - Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A;
+    // slove with the good old quady for
+  }
+
+  public double getAngleNeededFromSpeed(double x, double z ){
+    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_D*Math.pow(x,2) +- z;
+    double B =  Constants.Shooter.SURFACE_C + Constants.Shooter.SURFACE_F;
+    double A = Constants.Shooter.SURFACE_E;
+    double aws = (- B + Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A; // we need to see if it's postive or negative
+    if (aws > 0) return aws;
+    return (- B - Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A;
+    // slove with the good old quady for
+  }
+
+  public double[] findSpeedAndAngleFromDistance(double Distance){
+    double currentAngle = getHoodAngle();
+    double wantedPower = getSpeedNeededFromAngle(currentAngle,Distance);
+
+    if (wantedPower <= Constants.Shooter.MAX_AUTOSHOOT_POWER) {
+     double[] angleAndSpeed = {currentAngle, wantedPower};
+      return angleAndSpeed;
+  }
+  double[] array = {0,0};
+  return array;
+
+  }
+
+
 
   
   
