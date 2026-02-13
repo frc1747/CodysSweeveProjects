@@ -33,6 +33,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -57,6 +58,7 @@ public class RobotContainer {
 
     public static Turret turret = new Turret();
     public static Shooter shooter = new Shooter();
+    public static Intake intake = new Intake();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
@@ -116,8 +118,9 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        driver.leftTrigger().onTrue(new IntakeSpin(.5));
-        driver.rightTrigger().onTrue(new IntakeOut(.5));
+        driver.leftTrigger().whileTrue(new IntakeSpin(intake, .5));
+        driver.x().whileTrue(new IntakeSpin(intake, -.5));
+        driver.rightTrigger().onTrue(new IntakeOut(intake, .5));
 
         operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 

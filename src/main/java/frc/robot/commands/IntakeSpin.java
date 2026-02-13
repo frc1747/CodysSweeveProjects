@@ -1,34 +1,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Intake;
+import frc.robot.subsystems.Intake;
 
 public class IntakeSpin extends Command {
     private Intake intake;
-    public IntakeSpin(Intake intake) {
+    private double power;
+
+    public IntakeSpin(Intake intake, double power) {
         this.intake = intake;
+        this.power = power;
         addRequirements(intake);
-            }
-            public IntakeSpin(double d) {
-        //TODO Auto-generated constructor stub
     }
-            private void addRequirements(Intake intake2) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'addRequirements'");
-            }
-            @Override
-    public void initialize() {
-        this.intake.SetIntakeWheelPower(2);
-    }
+
     @Override
-    public void execute() {}
+    public void execute() {
+        intake.intakespin(power);
+    }
+
+    @Override
+    public void initialize() {
+
+    }
 
     @Override
     public void end(boolean interrupted) {
-        this.intake.SetIntakeWheelPower(0);
-    }
-    @Override
-    public boolean isFinished() {
-        return false;
+        intake.intakespin(0.0);
     }
 }

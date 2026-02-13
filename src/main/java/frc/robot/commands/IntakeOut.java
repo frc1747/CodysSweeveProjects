@@ -1,33 +1,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Intake;
+import frc.robot.subsystems.Intake;
 
 public class IntakeOut extends Command {
     private Intake intake;
-    public IntakeOut(Intake intake) {
+    private double power;
+
+    public IntakeOut(Intake intake, double power) {
         this.intake = intake;
+        this.power = power;
         addRequirements(intake);
-            }
-            public IntakeOut(double d) {
-        //TODO Auto-generated constructor stub
     }
-            private void addRequirements(Intake intake2) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'addRequirements'");
-            }
+
+    @Override
+    public void execute() {
+        intake.intakeout(power);
+    }
+
     @Override
     public void initialize() {
-        this.intake.SetIntakeHingePower(2);
+
     }
+
     @Override
-    public void execute() {}
-    @Override
-    public void end(boolean interrupted){
-        this.intake.SetIntakeHingePower(0);
-    }
-    @Override
-    public boolean isFinished(){
-        return false;
-    }
+    public void end(boolean interrupted) {
+        intake.intakeout(0.0);
+    } 
+
 }

@@ -19,9 +19,7 @@ public class Constants {
     public static final class Intake {
         public static final int MOTOR_ARM_PORT = 50;
         public static final int MOTOR_WHEELS_PORT = 51;
-        public void SetIntakePower(int i) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'SetIntakePower'");
-        }
+        
     }
+
 }
