@@ -10,8 +10,10 @@ import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,8 +27,7 @@ public class Shooter extends SubsystemBase {
   private DutyCycleOut dutyCycleShooter = new DutyCycleOut(0);
   private DutyCycleOut dutyCycleHood = new DutyCycleOut(0);
   private DutyCycleEncoder encoder;
-  private Dictionary<Double[], Double> SetShootDistancePoints;
-  private double[][] listOfSetPoints;
+  private final PIDController pid = new PIDController(Constants.Shooter.PID_P, Constants.Shooter.PID_I, Constants.Shooter.PID_D);
 
   public Shooter() {
 
@@ -36,7 +37,7 @@ public class Shooter extends SubsystemBase {
 
     this.encoder = new DutyCycleEncoder(Constants.Shooter.ENCODER_PORT);
     // this is use to set the control to follow master motor
-    motorLeft.setControl(new Follower(Constants.Shooter.MOTOR_RIGHT_PORT, true));
+    motorLeft.setControl(new Follower(Constants.Shooter.MOTOR_RIGHT_PORT,MotorAlignmentValue.Opposed ));
 
     // config for the shooter motors
     TalonFXSConfiguration configShooter = new TalonFXSConfiguration();
@@ -58,6 +59,9 @@ public class Shooter extends SubsystemBase {
     motorHood.getConfigurator().apply(configHood);
     motorLeft.getConfigurator().apply(configShooter);
     motorRight.getConfigurator().apply(configShooter);
+
+    pid.enableContinuousInput(0.0, 360.0);
+    pid.setTolerance(1.0);
   }
 
   public void shoot(double power){
@@ -67,7 +71,7 @@ public class Shooter extends SubsystemBase {
   
   public void moveHood(double power){
     dutyCycleHood.Output = power;
-    motorRight.setControl(dutyCycleHood);
+    motorHood.setControl(dutyCycleHood);
   }
 
   public double getHood(){
@@ -75,16 +79,28 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getHoodAngle(){
-    return (encoder.get()  + Constants.Shooter.ENCODER_OFFSET ) * 360;
+    return 30;
+    //return (encoder.get()  + Constants.Shooter.ENCODER_OFFSET ) * 360;
+  }
+  
+  public void moveHoodToAngle(double targetAngle){
+    double HoodAngle = getHoodAngle(); 
+    double output = pid.calculate(HoodAngle, targetAngle);
+
+    if (((Constants.Shooter.MIN_HOOD_ANGLE <= targetAngle ) && (targetAngle <= Constants.Shooter.MAX_HOOD_ANGLE))){
+    dutyCycleHood.Output = 0; 
+    }
+    motorHood.setControl(dutyCycleHood);
   }
 
-  public double autoAimSurfaceGetZ(double x, double y){
-    return Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_D*Math.pow(x,2) + Constants.Shooter.SURFACE_E*Math.pow(y,2) + Constants.Shooter.SURFACE_F*x*y;
+  public double getPowerNeededFromDistanceAndAngle(double x, double y){
+    // Z = A + BX + CY + DX^2 + FY^2 + EXY is the quady E Z is power, X is distance, Y is hood angle
+    return (Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_D*Math.pow(x,2) + Constants.Shooter.SURFACE_F*Math.pow(y,2) + Constants.Shooter.SURFACE_E*x*y)/100;
   }
 
-  public double getSpeedNeededFromAngle(double y, double z ){
-    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_E*Math.pow(y,2) +- z;
-    double B =  Constants.Shooter.SURFACE_B + Constants.Shooter.SURFACE_F;
+  public double getdistanceNeededFromAngleAndPower(double y, double z ){
+    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_C*y + Constants.Shooter.SURFACE_F*Math.pow(y,2) +- z*100;
+    double B =  Constants.Shooter.SURFACE_B + Constants.Shooter.SURFACE_E;
     double A = Constants.Shooter.SURFACE_D;
     double aws = (- B + Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A; // we need to see if it's postive or negative
     if (aws > 0) return aws;
@@ -92,10 +108,10 @@ public class Shooter extends SubsystemBase {
     // slove with the good old quady for
   }
 
-  public double getAngleNeededFromSpeed(double x, double z ){
-    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_D*Math.pow(x,2) +- z;
-    double B =  Constants.Shooter.SURFACE_C + Constants.Shooter.SURFACE_F;
-    double A = Constants.Shooter.SURFACE_E;
+  public double getAngleNeededFromDistanceAndPower(double x, double z ){
+    double C = Constants.Shooter.SURFACE_A + Constants.Shooter.SURFACE_B*x + Constants.Shooter.SURFACE_D*Math.pow(x,2) +- z*100;
+    double B =  Constants.Shooter.SURFACE_C + Constants.Shooter.SURFACE_E;
+    double A = Constants.Shooter.SURFACE_F;
     double aws = (- B + Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A; // we need to see if it's postive or negative
     if (aws > 0) return aws;
     return (- B - Math.sqrt( Math.pow(B, 2) - 4*A*C))/2*A;
@@ -104,22 +120,29 @@ public class Shooter extends SubsystemBase {
 
   public double[] findSpeedAndAngleFromDistance(double Distance){
     double currentAngle = getHoodAngle();
-    double wantedPower = getSpeedNeededFromAngle(currentAngle,Distance);
-
+    double wantedPower = getPowerNeededFromDistanceAndAngle(Distance, currentAngle);
+    double[] array = {-1,-1};
+    // this could be refactor 
     if (wantedPower <= Constants.Shooter.MAX_AUTOSHOOT_POWER) {
      double[] angleAndSpeed = {currentAngle, wantedPower};
       return angleAndSpeed;
   }
-  double[] array = {0,0};
-  return array;
+  // we are assuming that greater hood angle is a furtuer Shoot
+    for (currentAngle = getHoodAngle() ; currentAngle <= Constants.Shooter.MAX_HOOD_ANGLE ; currentAngle ++ ){
+      if (currentAngle >= Constants.Shooter.MAX_HOOD_ANGLE) return array;
+      if (wantedPower <= Constants.Shooter.MAX_AUTOSHOOT_POWER) {
+        double[] angleAndSpeed = {currentAngle, wantedPower};
+        return angleAndSpeed;}
+    }
+    for (currentAngle = getHoodAngle() ; currentAngle >= Constants.Shooter.MAX_HOOD_ANGLE ; currentAngle -- ){
+      if (currentAngle >= Constants.Shooter.MAX_HOOD_ANGLE) return array;
+      if (wantedPower <= Constants.Shooter.MAX_AUTOSHOOT_POWER) {
+        double[] angleAndSpeed = {currentAngle, wantedPower};
+        return angleAndSpeed;}
+    }
+    return array;
 
   }
-
-
-
-  
-  
-
 
   @Override
   public void periodic() {

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAimToPose;
 import frc.robot.commands.TurretGoToAngle;
@@ -93,7 +94,7 @@ public class RobotContainer {
 
         //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(joystick.getLeftX())));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+       // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
@@ -120,6 +121,7 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         joystick.y().whileTrue( new Shoot( shooter , .40));
+        joystick.a().whileTrue(new AutoShoot(shooter , turret, new Pose2d(2.0,2.0, new Rotation2d())));
     }
 
     public Command getAutonomousCommand() {

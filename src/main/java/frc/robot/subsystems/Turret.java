@@ -80,7 +80,7 @@ public class Turret extends SubsystemBase {
 
     if (((Constants.Turret.LOWER_LIMIT <= targetAngle) && (targetAngle <= Constants.Turret.UPPER_LIMIT))){
       dutyCycle.Output = 0;
-      motor.setControl(dutyCycle);
+      //motor.setControl(dutyCycle);
     }
     motor.setControl(dutyCycle);
   }
@@ -88,10 +88,10 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("encoder connected?", encoder.isConnected());
-    if (encoder.isConnected()) {
-      SmartDashboard.putNumber("encoder value", encoder.get());
-      SmartDashboard.putNumber("encoder angle", getTurretAngle());
-    }
+    //SmartDashboard.putBoolean("encoder connected?", encoder.isConnected());
+    //if (encoder.isConnected()) {
+      //SmartDashboard.putNumber("encoder value", encoder.get());
+      //SmartDashboard.putNumber("encoder angle", getTurretAngle());
+    
   }
 }
