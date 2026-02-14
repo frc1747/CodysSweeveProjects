@@ -371,5 +371,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 Constants.Vision.VISION_STDDEVS);
         }
 
+        System.out.println("Robot Degrees: " + getState().Pose.getRotation().getDegrees());
     }
 }

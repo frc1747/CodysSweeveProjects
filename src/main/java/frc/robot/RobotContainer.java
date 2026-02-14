@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AprilLock2;
+import frc.robot.commands.AprilLock3;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -119,7 +120,7 @@ public class RobotContainer {
         ));
 
         driver.rightBumper()
-            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup, rotationSup));
+            .whileTrue(new AprilLock3(limelight, turret));
 
         /*
         // Run SysId routines when holding back/start and X/Y.
