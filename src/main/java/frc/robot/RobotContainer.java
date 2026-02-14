@@ -34,6 +34,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -59,6 +60,7 @@ public class RobotContainer {
     public static Turret turret = new Turret();
     public static Shooter shooter = new Shooter();
     public static Intake intake = new Intake();
+    public static IntakePivot intakePivot = new IntakePivot();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
@@ -120,7 +122,9 @@ public class RobotContainer {
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         driver.leftTrigger().whileTrue(new IntakeSpin(intake, .5));
         driver.x().whileTrue(new IntakeSpin(intake, -.5));
-        driver.rightTrigger().onTrue(new IntakeOut(intake, .5));
+        
+        driver.rightTrigger().toggleOnTrue(new IntakeOut(intakePivot, .5));
+        driver.rightTrigger().toggleOnTrue(new IntakeSpin(intake, .5));
 
         operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 

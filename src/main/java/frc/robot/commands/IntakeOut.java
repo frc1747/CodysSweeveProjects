@@ -1,21 +1,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 
 public class IntakeOut extends Command {
-    private Intake intake;
+    private IntakePivot intakePivot;
     private double power;
 
-    public IntakeOut(Intake intake, double power) {
-        this.intake = intake;
+    public IntakeOut(IntakePivot intakePivot, double power) {
+        this.intakePivot = intakePivot;
         this.power = power;
-        addRequirements(intake);
+        addRequirements(intakePivot);
     }
 
     @Override
     public void execute() {
-        intake.intakeout(power);
+        intakePivot.intakepivot(0.5);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class IntakeOut extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intake.intakeout(0.0);
+        intakePivot.intakepivot(0.0);
     } 
 
 }
