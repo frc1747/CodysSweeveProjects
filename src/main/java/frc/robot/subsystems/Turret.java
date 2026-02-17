@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
   // currently incorrect because of gear ratio and absolute encoder
   // degrees
   public double getTurretAngle() {
-    return encoder.get() / 40.0;
+    return encoder.getDistance() / 62.5;
   }
 
   // returns pose of turret relative to field (absolute)
