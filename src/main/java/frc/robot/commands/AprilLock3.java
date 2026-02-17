@@ -58,7 +58,7 @@ public class AprilLock3 extends Command {
       double yawOffset = phi - turretPose.getRotation().getRadians() - Math.PI;
       double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset));
       // System.out.println("robotPose: " + robotPose);
-      // System.out.println("wrappedyaw: " + wrappedYaw);
+      System.out.println("wrappedyaw: " + wrappedYaw * 180 / Math.PI);
 
       // pid controlling rotation compensation
       double pidOutput = -1 * pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
@@ -74,7 +74,7 @@ public class AprilLock3 extends Command {
         power = -1.0;
       }
       turret.basicSpin(power);
-      System.out.println(power);
+      // System.out.println("Power: " + power);
   } 
 
   // Called once the command ends or is interrupted.

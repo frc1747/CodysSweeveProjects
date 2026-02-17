@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
   // currently incorrect because of gear ratio and absolute encoder
   // degrees
   public double getTurretAngle() {
-    return encoder.getDistance() / 62.5;
+    return encoder.get() / 62.578;
   }
 
   // returns pose of turret relative to field (absolute)
@@ -79,7 +79,7 @@ public class Turret extends SubsystemBase {
     Translation2d absoluteTurretLoc = robotLoc.plus(relativeTurretLoc);
     // rotation of turret relative to field
     Rotation2d relativeTurretRotation = new Rotation2d(getTurretAngle() * Math.PI / 180.0); // how?
-    System.out.println("relativeTurretAngle: " + relativeTurretRotation);
+    // System.out.println("relativeTurretAngle: " + relativeTurretRotation);
     Rotation2d absoluteTurretRotation = robotRotation.plus(relativeTurretRotation);
     Pose2d absoluteTurretPose = new Pose2d(absoluteTurretLoc, absoluteTurretRotation);
     return absoluteTurretPose;
@@ -114,10 +114,8 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("encoder value", encoder.get());
-    SmartDashboard.putNumber("encoder angle", getTurretAngle());
-    // System.out.println("encoder value: " +  encoder.get());
-    // System.out.println("encoder angle: " + getTurretAngle());
-    System.out.println("Turret Degrees: " + getAbsTurretPose().getRotation().getDegrees());
+    // SmartDashboard.putNumber("encoder value", encoder.get());
+    // SmartDashboard.putNumber("encoder angle", getTurretAngle());
+    // System.out.println("Turret Degrees: " + getAbsTurretPose().getRotation().getDegrees());
   }
 }
