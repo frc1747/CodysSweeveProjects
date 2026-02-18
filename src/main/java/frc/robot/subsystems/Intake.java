@@ -28,7 +28,6 @@ public class Intake extends SubsystemBase {
     }
     public void intakespin(double power) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'intakespin'");
     }
 
     public void SetIntakePower(double armPower, double wheelsPower) {

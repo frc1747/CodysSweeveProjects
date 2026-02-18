@@ -32,7 +32,7 @@ public class IntakePivot extends SubsystemBase {
     }
     public void intakepivot(double tick) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'intakespin'");
+       
     }
 
     public void SetIntakePower(double armPower, double wheelsPower) {

@@ -5,7 +5,7 @@ public class Constants {
         public static final int MOTOR_PORT = 59;
         public static final int ENCODER_PORT = 0;
         public static final double TURRETRATIO = 11; // the number of teeth on the turret's gear is 110 and the motor has a gear with 10 teeth
-        public static final double PID_P = 0;
+        public static final double PID_P = .5;
         public static final double PID_I = 0; // needs tuning
         public static final double PID_D = 0;
         public static final double GO_TO_ANGLE_LOWER_SAFETY = -1;
