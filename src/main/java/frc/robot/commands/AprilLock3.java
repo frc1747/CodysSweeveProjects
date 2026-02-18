@@ -67,12 +67,15 @@ public class AprilLock3 extends Command {
       // System.out.println("pidOutput: " + pidOutput);
       // System.out.println("clampPid: " + clampPid);
 
-      double power = -yawOffset / 2 / Math.PI * 0.2;
-      if (power > 1.0) {
-        power = 1.0;
-      } else if (power < -1.0) {
-        power = -1.0;
-      }
+      // double power = -yawOffset / 2 / Math.PI * 0.2;
+      // if (power > 1.0) {
+      //   power = 1.0;
+      // } else if (power < -1.0) {
+      //   power = -1.0;
+      // }
+
+      double power = 7 * wrappedYaw / 180;
+      System.out.println("Power: " + power);
       turret.basicSpin(power);
       // System.out.println("Power: " + power);
   } 
