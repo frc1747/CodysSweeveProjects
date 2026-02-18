@@ -61,7 +61,7 @@ public class AprilLock3 extends Command {
       System.out.println("wrappedyaw: " + wrappedYaw * 180 / Math.PI);
 
       // pid controlling rotation compensation
-      double pidOutput = -1 * pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
+      double pidOutput = pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
       double clampPid = pidOutput > Constants.Vision.APRIL_LOCK_PID_CLAMP ? Constants.Vision.APRIL_LOCK_PID_CLAMP : pidOutput;
       clampPid = clampPid < -Constants.Vision.APRIL_LOCK_PID_CLAMP ? -Constants.Vision.APRIL_LOCK_PID_CLAMP : clampPid;
       // System.out.println("pidOutput: " + pidOutput);
@@ -74,7 +74,7 @@ public class AprilLock3 extends Command {
       //   power = -1.0;
       // }
 
-      double power = 7 * wrappedYaw / 180;
+      double power = pidOutput;
       System.out.println("Power: " + power);
       turret.basicSpin(power);
       // System.out.println("Power: " + power);
