@@ -63,7 +63,6 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // field 
-    // should it be public?
     public static final Field2d field = new Field2d();
 
     /* Path follower */
@@ -100,10 +99,10 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        driver.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
-        driver.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
-        driver.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
-        driver.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
+        // driver.pov(0).whileTrue(new TurretGoToAngle(turret, 0));
+        // driver.pov(90).whileTrue(new TurretGoToAngle(turret, 270));
+        // driver.pov(180).whileTrue(new TurretGoToAngle(turret, 180));
+        // driver.pov(270).whileTrue(new TurretGoToAngle(turret, 90));
 
         //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(driver.getLeftX())));
 
@@ -125,6 +124,9 @@ public class RobotContainer {
 
         */
 
+        SmartDashboard.putNumber("Shooter Speed", 0.4);
+        SmartDashboard.putNumber("Hood Angle", 0.0);
+
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
@@ -134,8 +136,8 @@ public class RobotContainer {
         operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-
-        driver.y().whileTrue( new Shoot( shooter , .40));
+        double shooterPower = SmartDashboard.getNumber("Shooter Speed", 0.4);
+        driver.y().whileTrue( new Shoot(shooter , shooterPower));
     }
 
     public Command getAutonomousCommand() {

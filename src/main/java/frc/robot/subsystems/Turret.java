@@ -56,7 +56,7 @@ public class Turret extends SubsystemBase {
 
 
   public double getTurretAngle() {
-    return encoder.get() * 360 * 11;
+    return encoder.get()/(62.5);
   }
 
   // aim at a pose2d
