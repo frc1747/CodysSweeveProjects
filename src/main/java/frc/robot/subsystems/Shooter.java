@@ -128,7 +128,8 @@ public class Shooter extends SubsystemBase {
       return angleAndSpeed;
   }
   // we are assuming that greater hood angle is a furtuer Shoot
-    for (currentAngle = getHoodAngle() ; currentAngle <= Constants.Shooter.MAX_HOOD_ANGLE ; currentAngle ++ ){
+   
+  for (currentAngle = getHoodAngle() ; currentAngle <= Constants.Shooter.MAX_HOOD_ANGLE ; currentAngle ++ ){
       if (currentAngle >= Constants.Shooter.MAX_HOOD_ANGLE) return array;
       if (wantedPower <= Constants.Shooter.MAX_AUTOSHOOT_POWER) {
         double[] angleAndSpeed = {currentAngle, wantedPower};

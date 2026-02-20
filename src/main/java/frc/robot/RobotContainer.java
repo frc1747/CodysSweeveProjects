@@ -135,7 +135,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
+        //operator.rightTrigger().whileTrue(new TurretAimToPose(turret , new Pose2d(0.0,0.0,new Rotation2d()),new Pose2d(2.0,2.0,new Rotation2d())));
 
         // TODO: change 0.75 values to constants
         operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.2));
@@ -144,6 +144,7 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         driver.y().whileTrue( new Shoot( shooter , .40));
+
     }
 
     public Command getAutonomousCommand() {

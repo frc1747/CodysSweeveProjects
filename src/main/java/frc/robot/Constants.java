@@ -81,6 +81,7 @@ public class Constants {
         public static final double UPPER_LIMIT = 90;
         public static final double LOWER_LIMIT = -90;
         public static final double DIST_TO_BOT_CENTER = 0.1529842; // meters
+        public static final double AUTO_AIM_TOLERANCE = 5;// angle
     }
 
     public static final class Shooter {

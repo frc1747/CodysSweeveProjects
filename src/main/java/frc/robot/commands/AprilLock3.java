@@ -46,38 +46,15 @@ public class AprilLock3 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      // pose of target on field, rotation represents angle of its normal vector
-      Pose2d targetPose = new Pose2d(new Translation2d(Constants.Vision.FIELD_CENTER_X, Constants.Vision.FIELD_CENTER_Y), new Rotation2d(0.0));
-      Pose2d turretPose = turret.getAbsTurretPose();
-      
-      // difference between robot and april tag poses
-      Translation2d diff = turretPose.getTranslation().minus(targetPose.getTranslation());
-        
-      // yaw offset between target and robot vector pointing directly out from robot-front
-      double phi = Math.atan2(diff.getY(), diff.getX());
-      double yawOffset = phi - turretPose.getRotation().getRadians() - Math.PI;
-      double wrappedYaw = Math.atan2(Math.sin(yawOffset), Math.cos(yawOffset));
-      // System.out.println("robotPose: " + robotPose);
-      System.out.println("wrappedyaw: " + wrappedYaw * 180 / Math.PI);
+      double yawOffset = turret.getYawOffset(new Translation2d(Constants.Vision.FIELD_CENTER_X, Constants.Vision.FIELD_CENTER_Y));
 
       // pid controlling rotation compensation
-      double pidOutput = pid.calculate(wrappedYaw); // not sure why it needs to be multiplied by -1
+      double pidOutput = pid.calculate(yawOffset); 
       double clampPid = pidOutput > Constants.Vision.APRIL_LOCK_PID_CLAMP ? Constants.Vision.APRIL_LOCK_PID_CLAMP : pidOutput;
       clampPid = clampPid < -Constants.Vision.APRIL_LOCK_PID_CLAMP ? -Constants.Vision.APRIL_LOCK_PID_CLAMP : clampPid;
-      // System.out.println("pidOutput: " + pidOutput);
-      // System.out.println("clampPid: " + clampPid);
-
-      // double power = -yawOffset / 2 / Math.PI * 0.2;
-      // if (power > 1.0) {
-      //   power = 1.0;
-      // } else if (power < -1.0) {
-      //   power = -1.0;
-      // }
 
       double power = pidOutput;
-      System.out.println("Power: " + power);
       turret.basicSpin(power);
-      // System.out.println("Power: " + power);
   } 
 
   // Called once the command ends or is interrupted.
