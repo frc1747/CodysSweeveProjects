@@ -114,9 +114,9 @@ public class RobotContainer {
 
         //turret.setDefaultCommand(new InstantCommand(() -> turret.basicSpin(driver.getLeftX())));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
 
         driver.rightBumper()
@@ -143,7 +143,7 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.y().whileTrue( new Shoot( shooter , .40));
+        driver.y().whileTrue( new Shoot( shooter , .40));
     }
 
     public Command getAutonomousCommand() {

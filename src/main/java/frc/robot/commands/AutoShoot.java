@@ -5,9 +5,12 @@
 package frc.robot.commands;
 
 import java.lang.annotation.Target;
+import java.lang.constant.Constable;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
@@ -15,14 +18,16 @@ import frc.robot.subsystems.Turret;
 public class AutoShoot extends Command {
   /** Creates a new AutoShoot. */
   private Shooter shooter;
-  private Turret turret;
+  private DoubleSupplier turretAngle;
   private Pose2d target;
+  private Pose2d turretPose;
 
-  public AutoShoot(Shooter shooter, Turret turret , Pose2d target) {
+  public AutoShoot(Shooter shooter, DoubleSupplier turretAngle, Pose2d turretPose , Pose2d target) {
     this.shooter = shooter;
-    this.turret = turret;
+    this.turretAngle = turretAngle;
     this.target = target;
-    addRequirements(shooter, turret);
+    this.turretPose = turretPose;
+    addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -33,14 +38,14 @@ public class AutoShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double distance = Math.sqrt(Math.pow(target.getX(),2) + Math.pow(target.getY(),2)); // this needs to be intergeted with mult pose
-   // System.out.println(distance);
+    if (turretAngle.getAsDouble() <= Constants.Turret.AUTO_AIM_TOLERANCE ){
+    double distance = Math.sqrt(Math.pow(target.getX()+ turretPose.getX(),2) + Math.pow(target.getY() + turretPose.getY(), 2)); // this needs to be intergeted with mult pose
     double [] speedAndAngle = shooter.findSpeedAndAngleFromDistance(distance);
-   // shooter.moveHoodToAngle(speedAndAngle[0]);
-   // turret.aimAtPose(new Pose2d(), target ); // this needs to be intergeted with mult pose
-   // shooter.shoot(speedAndAngle[1]);
-    System.out.println("hoodAngle " + speedAndAngle[0] + " : power " + speedAndAngle[1] + " : Turret Angle");
+    shooter.moveHoodToAngle(speedAndAngle[0]);
+    shooter.shoot(speedAndAngle[1]);
+    //System.out.println("hoodAngle " + speedAndAngle[0] + " : power " + speedAndAngle[1] + " : Turret Angle");
   }
+}
 
   // Called once the command ends or is interrupted.
   @Override
