@@ -2,7 +2,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -352,25 +356,59 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
 
     // ****** ADDITIONAL METHODS TO SUPPORT VISION PROCESSING *******
-
     private void addLimelightMeasurement() {
-
-        // Kludge to pull the first Limelight in the list as the default vision device
-        // TODO: Rewrite to support multiple Limelights
-        String limelight = Constants.Vision.ACTIVE_POSE_LIMELIGHTS.get(0);
+        // This will create an Optional instance of an MegaTag2 PoseEstimate from 
+        // the LimeLight with the best (lowest ambiguity value) pose estimation.
+        // It does this by walking the list of defined LimeLights, getting the
+        // abiguity value for all fiducials seen by a given LimeLight, and 
+        // then returns the best PoseEstimate instance.
+        //
+        // It is returned as a Map Entry (key/value pair) to preserve both the 
+        // name of the selected LimeLight and its PoseEstimate instance.
+        Optional<Map.Entry<String, LimelightHelpers.PoseEstimate>> bestLimeLightPose =
+            Constants.Vision.ACTIVE_POSE_LIMELIGHTS.stream()
+                .map(name -> Map.entry(
+                    name, 
+                    LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name)
+                ))
+                .filter(entry -> entry.getValue() != null)
+                .filter(entry -> entry.getValue().tagCount > 0)
+                .min(Comparator.comparingDouble(entry ->
+                    bestAmbiguity(entry.getValue())
+                )
+            );
 
         double yawDeg = getState().Pose.getRotation().getDegrees();
-        LimelightHelpers.SetRobotOrientation(limelight, yawDeg, 0, 0, 0, 0, 0);
 
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
+        // If we had a usable PoseEstimate from a LimeLight, the Optional instance
+        // contains a Map Entry with the best (lowest abiguity of all visible 
+        // ApriTags across all available LimeLights) PoseEstimate and String name 
+        // of the responsible LimeLight and the MegaTag2 pose instance to inform 
+        // the drivetrain of the bot's current position on the field.
+        bestLimeLightPose.ifPresent(entry -> {
+                String limelight = entry.getKey();
+                var mt2 = entry.getValue();
+ 
+                LimelightHelpers.SetRobotOrientation(
+                    limelight, yawDeg, 0, 0, 
+                    0, 0, 0
+                );
+                addVisionMeasurement(mt2.pose, 
+                    mt2.timestampSeconds, 
+                    Constants.Vision.VISION_STDDEVS
+                );       
+            }
+        );
+    }
 
-        // Did we actually receive a MetaTag2 instance and if we did, did it see any tags?
-        if (mt2 != null && mt2.tagCount > 0) {
-            addVisionMeasurement(mt2.pose, 
-                mt2.timestampSeconds, 
-                Constants.Vision.VISION_STDDEVS);
-        }
-
-        System.out.println("Robot Degrees: " + getState().Pose.getRotation().getDegrees());
+    // Helper Method to use for the min method to select the lowest abiguity AprilTag.
+    //
+    // Rather than hardcoding to rawFiducials[0], iterate any instances it may have.
+    // (e.g., if a given LimeLight can see multiple AprilTags)
+    private static double bestAmbiguity(LimelightHelpers.PoseEstimate p) {
+        return Arrays.stream(p.rawFiducials)
+            .mapToDouble(f -> f.ambiguity)
+            .min()
+            .orElse(Double.MAX_VALUE);
     }
 }

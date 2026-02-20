@@ -2,13 +2,10 @@ package frc.robot;
 
 import java.util.List;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public static final class Vision {
@@ -16,13 +13,16 @@ public class Constants {
         // WARNING: IF YOU CHANGE OUT THE HARDWARE, ENSURE TO PROPERLY
         // SET THE HOSTNAME ON THE LIMELIGHT TO COORESPOND WITH ITS 
         // LOCATION ON THE BOT!!! 
-        public static final String LIMELIGHT_FRONT = "limelight-front";
-        public static final String LIMELIGHT_REAR = "limelight-rear";
+        public static final String LIMELIGHT_REAR_LEFT = "limelight-rear-left";
+        public static final String LIMELIGHT_REAR_RIGHT = "limelight-rear-right";
         public static final String LIMELIGHT_TURRET = "limelight-turret";
 
         // List of the active Limelights on the system to be used for Pose2D estimation
         // Add any Limelights defined above to this list.
-        public static final List<String> ACTIVE_POSE_LIMELIGHTS = List.of(LIMELIGHT_FRONT);
+        public static final List<String> ACTIVE_POSE_LIMELIGHTS = List.of(
+            LIMELIGHT_REAR_LEFT,
+            LIMELIGHT_REAR_RIGHT
+        );
 
         // VISION_STDDEVS allows us to control how much we trust the values coming from the Limelight(s).
         // The higher the value (distance standard deviations), the less we trust it.
