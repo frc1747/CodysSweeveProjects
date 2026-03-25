@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
+// import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -282,7 +282,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        addLimelightMeasurement();
+        // addLimelightMeasurement();
 
         RobotContainer.field.setRobotPose(getState().Pose);
         SmartDashboard.putData(RobotContainer.field);
@@ -352,24 +352,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // ****** ADDITIONAL METHODS TO SUPPORT VISION PROCESSING *******
 
-    private void addLimelightMeasurement() {
+    // private void addLimelightMeasurement() {
 
         // Kludge to pull the first Limelight in the list as the default vision device
         // TODO: Rewrite to support multiple Limelights
-        String limelight = Constants.Vision.ACTIVE_POSE_LIMELIGHTS.get(0);
+        // String limelight = Constants.Vision.ACTIVE_POSE_LIMELIGHTS.get(0);
 
-        double yawDeg = getState().Pose.getRotation().getDegrees();
-        LimelightHelpers.SetRobotOrientation(limelight, yawDeg, 0, 0, 0, 0, 0);
+        // double yawDeg = getState().Pose.getRotation().getDegrees();
+        // LimelightHelpers.SetRobotOrientation(limelight, yawDeg, 0, 0, 0, 0, 0);
 
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
-        System.out.println("Mt2: " + mt2.pose);
+        // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
+        // System.out.println("Mt2: " + mt2.pose);
 
         // Did we actually receive a MetaTag2 instance and if we did, did it see any tags?
-        if (mt2 != null && mt2.tagCount > 0) {
-            addVisionMeasurement(mt2.pose, 
-                mt2.timestampSeconds, 
-                Constants.Vision.VISION_STDDEVS);
-        }
+        // if (mt2 != null && mt2.tagCount > 0) {
+            // addVisionMeasurement(mt2.pose, 
+                // mt2.timestampSeconds, 
+                // Constants.Vision.VISION_STDDEVS);
+        // }
 
-    }
+    // }
 }

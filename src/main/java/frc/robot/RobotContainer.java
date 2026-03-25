@@ -25,17 +25,17 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.commands.AprilLock2;
+// import frc.robot.commands.AprilLock2;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LimeLight;
-import frc.robot.commands.Shoot;
+// import frc.robot.subsystems.LimeLight;
+// import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAimToPose;
 import frc.robot.commands.TurretGoToAngle;
 import frc.robot.commands.TurretMove;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
+// import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,7 +51,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     // limelight
-    private final LimeLight limelight = new LimeLight("limelight-front");
+    // private final LimeLight limelight = new LimeLight("limelight-front");
 
     // control
     private final CommandXboxController driver = new CommandXboxController(0);
@@ -70,7 +70,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public static Turret turret = new Turret();
-    public static Shooter shooter = new Shooter();
+    // public static Shooter shooter = new Shooter();
 
     public RobotContainer() {
         NamedCommands.registerCommand("Print", new InstantCommand(() -> System.out.println("test")));
@@ -112,8 +112,8 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
 
-        driver.rightBumper()
-            .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup, rotationSup));
+        // driver.rightBumper()
+        //     .whileTrue(new AprilLock2(limelight, drivetrain, translationSup, strafeSup, rotationSup));
 
         /*
         // Run SysId routines when holding back/start and X/Y.
@@ -133,9 +133,9 @@ public class RobotContainer {
         operator.leftBumper().and(driver.rightBumper().negate()).whileTrue(new TurretMove(turret, -.75));
         operator.rightBumper().and(driver.leftBumper().negate()).whileTrue(new TurretMove(turret, 0.75));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        // drivetrain.registerTelemetry(logger::telemeterize);
 
-        driver.y().whileTrue( new Shoot( shooter , .40));
+        // driver.y().whileTrue( new Shoot( shooter , .40));
     }
 
     public Command getAutonomousCommand() {
